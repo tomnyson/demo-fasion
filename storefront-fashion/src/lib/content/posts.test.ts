@@ -22,10 +22,10 @@ describe('posts', () => {
     expect(getPost('khong-ton-tai')).toBeNull()
   })
 
-  it('gives every post body text, a picsum image and an ISO date', () => {
+  it('gives every post body text, a local demo image and an ISO date', () => {
     for (const post of posts) {
       expect(post.body.length).toBeGreaterThan(1)
-      expect(post.image).toMatch(/^https:\/\/picsum\.photos\/seed\//)
+      expect(post.image).toMatch(/^\/demo\/[a-z]+-\d\.jpg$/)
       expect(post.date).toMatch(/^\d{4}-\d{2}-\d{2}$/)
     }
   })

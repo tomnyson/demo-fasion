@@ -23,12 +23,12 @@ describe('Home page', () => {
 })
 
 describe('SLIDES', () => {
-  it('has three slides pointing at existing routes with picsum images', () => {
+  it('has three slides pointing at existing routes with local demo images', () => {
     expect(SLIDES).toHaveLength(3)
     for (const slide of SLIDES) {
       expect(slide.href).toMatch(/^\/(danh-muc|bo-suu-tap)\/[a-z-]+$/)
-      expect(slide.image).toMatch(/^https:\/\/picsum\.photos\/seed\/[\w-]+\/1600\/700$/)
-      expect(slide.imageMobile).toMatch(/^https:\/\/picsum\.photos\/seed\/[\w-]+\/800\/1000$/)
+      expect(slide.image).toMatch(/^\/demo\/slide-\d\.jpg$/)
+      expect(slide.imageMobile).toMatch(/^\/demo\/[a-z]+-\d\.jpg$/)
     }
     expect(new Set(SLIDES.map((s) => s.id)).size).toBe(3)
   })

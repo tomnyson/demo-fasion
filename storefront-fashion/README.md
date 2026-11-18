@@ -1,6 +1,6 @@
 # Lá Studio Storefront
 
-Website bán thời trang nữ xây bằng Next.js 16 (App Router), React 19, Tailwind CSS 4 và TypeScript. Tông trắng và xanh lá chuối. Thương hiệu **Lá Studio**, dữ liệu và ảnh chỉ là mẫu (ảnh placeholder từ picsum.photos).
+Website bán thời trang nữ xây bằng Next.js 16 (App Router), React 19, Tailwind CSS 4 và TypeScript. Tông trắng và xanh lá chuối. Thương hiệu **Lá Studio**, dữ liệu và ảnh chỉ là mẫu. Ảnh demo nằm trong `public/demo/` (nguồn và giấy phép trong `public/demo/CREDITS.md`, ảnh miễn phí từ Pexels); cửa hàng cần thay bằng ảnh sản phẩm thật. Đường dẫn ảnh khai báo trong `src/config/demo-images.ts`.
 
 Mọi sản phẩm mua qua giỏ hàng: chọn màu, size, số lượng, thanh toán COD hoặc chuyển khoản, trang đặt hàng thành công. Trang chủ có slider, ba khối sản phẩm (nổi bật, best seller, hàng mới về). Mọi trang có cột sáu nút liên hệ nhanh (Trang chủ, Hotline, Zalo, Messenger, Shopee, Tiktok): cột dọc bên phải từ 850px, thanh ngang dưới đáy trên điện thoại. Từ 850px, trang chừa 100px bên phải cho cột này.
 

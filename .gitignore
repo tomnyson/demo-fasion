@@ -1,14 +1,32 @@
+# Dependencies and build output (any app folder)
 node_modules/
 .next/
+out/
+build/
+*.tsbuildinfo
+next-env.d.ts
+
+# Test and tool output
+coverage/
+test-results/
+playwright-report/
+blob-report/
 .playwright-mcp/
-__pycache__/
 .superpowers/
-storefront/.data/
-storefront/coverage/
-storefront/test-results/
-storefront/playwright-report/
+
+# Local data written by the apps (orders, quote requests)
+.data/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Python build helpers of the static template
+__pycache__/
+
+# OS and editor
 .DS_Store
-storefront-fashion/.data/
-storefront-fashion/coverage/
-storefront-fashion/test-results/
-storefront-fashion/playwright-report/
+.vscode/
+.idea/
+*.log

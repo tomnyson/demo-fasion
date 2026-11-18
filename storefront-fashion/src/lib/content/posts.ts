@@ -1,3 +1,5 @@
+import { categoryPhoto } from '@/config/demo-images'
+
 export type PostSection = 'tin-tuc' | 'thoi-trang'
 
 export interface Post {
@@ -25,7 +27,7 @@ const POSTS: readonly Post[] = Object.freeze([
     excerpt: 'Lá Studio vừa cập nhật loạt đầm, váy chất liệu thoáng với gam màu trung tính dễ mặc.',
     date: '2026-11-10',
     tag: 'Hàng mới',
-    image: 'https://picsum.photos/seed/bst-moi/800/500',
+    image: categoryPhoto('vay', 2),
     body: [
       'Bộ sưu tập mới tập trung vào những thiết kế nhẹ nhàng, dễ mặc từ sáng đến tối: đầm suông, váy xếp ly và áo kiểu có phom rộng vừa phải.',
       'Bảng màu lấy cảm hứng từ sắc lá: trắng kem, xanh lá chuối, be và nâu đất. Các gam này dễ phối với nhau nên một vài món là đủ tạo nhiều bộ trang phục.',
@@ -39,7 +41,7 @@ const POSTS: readonly Post[] = Object.freeze([
     excerpt: 'Ba số đo ngực, eo, mông và vài mẹo nhỏ giúp bạn chọn đúng size mà không cần thử.',
     date: '2026-10-28',
     tag: 'Kích thước',
-    image: 'https://picsum.photos/seed/chon-size/800/500',
+    image: categoryPhoto('quan', 3),
     body: [
       'Mua đồ online dễ vừa nhất khi bạn có sẵn ba số đo: vòng ngực, vòng eo và vòng mông. Đo sát người, đứng thẳng và không siết chặt thước.',
       'Đối chiếu số đo với bảng size ở trang sản phẩm. Nếu nằm giữa hai size, hãy chọn size lớn hơn với đầm suông và áo rộng, chọn size nhỏ hơn nếu bạn thích phom ôm.',
@@ -53,7 +55,7 @@ const POSTS: readonly Post[] = Object.freeze([
     excerpt: 'Lộn trái, giặt nước lạnh và phơi trong bóng râm giúp quần áo giữ dáng qua nhiều lần mặc.',
     date: '2026-09-18',
     tag: 'Chăm sóc',
-    image: 'https://picsum.photos/seed/bao-quan/800/500',
+    image: categoryPhoto('ao', 3),
     body: [
       'Đồ vải mềm như voan, lụa tổng hợp hay thun mịn nên được lộn trái và cho vào túi giặt để hạn chế xù và móc sợi.',
       'Giặt bằng nước lạnh, chất tẩy nhẹ, không vắt xoắn. Đầm và váy nên được vắt nhẹ bằng khăn rồi phơi ngang hoặc treo trên móc có vai rộng.',
@@ -67,7 +69,7 @@ const POSTS: readonly Post[] = Object.freeze([
     excerpt: 'Một chiếc sơ mi, một quần ống suông và một chân váy bút chì đủ cho cả tuần đi làm.',
     date: '2026-11-05',
     tag: 'Phối đồ',
-    image: 'https://picsum.photos/seed/cong-so/800/500',
+    image: categoryPhoto('ao', 1),
     body: [
       'Tủ đồ công sở gọn nhẹ bắt đầu từ ba món: áo sơ mi trắng, quần ống suông tối màu và chân váy bút chì. Từ đây bạn có thể ghép được nhiều bộ khác nhau.',
       'Thử đổi nhịp bằng phụ kiện: thắt lưng nhỏ, khăn lụa buộc cổ hoặc một đôi giày màu be. Những chi tiết này làm bộ đồ quen thuộc trông mới hơn.',
@@ -81,7 +83,7 @@ const POSTS: readonly Post[] = Object.freeze([
     excerpt: 'Đầm xòe, đầm suông hay đầm ôm: mỗi kiểu tôn một vóc dáng khác nhau.',
     date: '2026-10-12',
     tag: 'Gợi ý',
-    image: 'https://picsum.photos/seed/chon-dam/800/500',
+    image: categoryPhoto('dam', 4),
     body: [
       'Với vóc dáng quả lê, đầm xòe từ eo giúp cân đối phần hông. Người có vai rộng nên chọn cổ chữ V hoặc cổ vuông để mềm hóa đường vai.',
       'Đầm suông phù hợp với hầu hết vóc dáng và đặc biệt thoải mái khi đi làm hay đi chơi cả ngày. Thêm thắt lưng nếu bạn muốn nhấn eo.',
@@ -95,7 +97,7 @@ const POSTS: readonly Post[] = Object.freeze([
     excerpt: 'Xanh rêu, be, nâu caramel và trắng kem: các màu dễ phối và hợp làn da Á Đông.',
     date: '2026-09-20',
     tag: 'Xu hướng',
-    image: 'https://picsum.photos/seed/mau-sac/800/500',
+    image: categoryPhoto('vay', 3),
     body: [
       'Khi trời chuyển lạnh, những gam màu ấm và trầm lên ngôi: xanh rêu, be, nâu caramel và trắng kem. Chúng dễ phối với nhau mà vẫn có chiều sâu.',
       'Nếu ngại màu sắc, bạn có thể bắt đầu bằng phối hai màu cùng tông, ví dụ áo be với quần nâu nhạt, sau đó thêm một món xanh lá làm điểm nhấn.',

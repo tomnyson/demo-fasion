@@ -1,3 +1,4 @@
+import { productImage } from '@/config/demo-images'
 import { normalizeText } from '../text'
 import type { Product, ProductColor, ProductTag, Size } from './types'
 
@@ -88,10 +89,10 @@ function tagsFor(index: number): readonly ProductTag[] {
   return []
 }
 
-function buildColors(slug: string, count: number): readonly ProductColor[] {
+function buildColors(categorySlug: string, productIndex: number, count: number): readonly ProductColor[] {
   return COLOR_NAMES.slice(0, count).map((name, n) => ({
     name,
-    image: `https://picsum.photos/seed/${slug}-${n + 1}/900/1200`,
+    image: productImage(categorySlug, productIndex, n),
   }))
 }
 
@@ -109,7 +110,7 @@ function buildProduct(spec: Spec, index: number, globalIndex: number): Product {
     categorySlug: spec.categorySlug,
     price,
     compareAtPrice: onSale ? price + SALE_MARKUP : null,
-    colors: buildColors(slug, 3 + (index % 3)),
+    colors: buildColors(spec.categorySlug, index, 3 + (index % 3)),
     sizes: SIZES,
     tags: Object.freeze(tagsFor(index)),
     highlights: Object.freeze([...spec.highlights]),
