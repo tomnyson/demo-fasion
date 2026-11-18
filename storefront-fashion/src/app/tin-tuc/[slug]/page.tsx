@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import { Breadcrumb } from '@/components/ui/Breadcrumb'
-import { getPost, getPosts } from '@/lib/content/posts'
+import { getPost, getPosts, POST_SECTIONS } from '@/lib/content/posts'
 import { formatDate } from '@/lib/format'
 
 interface PostPageProps {
@@ -27,7 +27,11 @@ export default async function PostPage({ params }: PostPageProps) {
   return (
     <div className="container-site py-8">
       <Breadcrumb
-        items={[{ label: 'Trang chủ', href: '/' }, { label: 'Tin tức', href: '/tin-tuc' }, { label: post.title }]}
+        items={[
+          { label: 'Trang chủ', href: '/' },
+          { label: POST_SECTIONS[post.section].name, href: POST_SECTIONS[post.section].path },
+          { label: post.title },
+        ]}
       />
       <article className="mx-auto mt-6 max-w-[760px]">
         <p className="text-sm font-bold uppercase text-brand-strong">{post.tag} · {formatDate(post.date)}</p>

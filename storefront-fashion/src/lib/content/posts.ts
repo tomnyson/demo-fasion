@@ -1,5 +1,8 @@
+export type PostSection = 'tin-tuc' | 'thoi-trang'
+
 export interface Post {
   readonly slug: string
+  readonly section: PostSection
   readonly title: string
   readonly excerpt: string
   readonly date: string
@@ -8,90 +11,102 @@ export interface Post {
   readonly body: readonly string[]
 }
 
+export const POST_SECTIONS: Readonly<Record<PostSection, { readonly name: string; readonly path: string }>> =
+  Object.freeze({
+    'tin-tuc': Object.freeze({ name: 'Tin tức', path: '/tin-tuc' }),
+    'thoi-trang': Object.freeze({ name: 'Thời trang', path: '/thoi-trang' }),
+  })
+
 const POSTS: readonly Post[] = Object.freeze([
   {
-    slug: 'chon-vai-ao-dong-phuc-doi-nhom',
-    title: 'Cách chọn loại vải cho áo đồng phục đội nhóm',
-    excerpt: 'Thun lạnh, thun mè hay microfiber: mỗi loại vải hợp với một môn và một mức ngân sách khác nhau.',
+    slug: 'bo-suu-tap-moi-dam-vay-mua-he',
+    section: 'tin-tuc',
+    title: 'Bộ sưu tập mới: đầm và váy nhẹ cho những ngày nắng',
+    excerpt: 'Lá Studio vừa cập nhật loạt đầm, váy chất liệu thoáng với gam màu trung tính dễ mặc.',
     date: '2026-11-10',
-    tag: 'Chất liệu',
-    image: 'https://picsum.photos/seed/vai-ao/800/500',
+    tag: 'Hàng mới',
+    image: 'https://picsum.photos/seed/bst-moi/800/500',
     body: [
-      'Chất liệu quyết định cảm giác mặc của cả đội trong suốt trận đấu. Vải càng thoáng và thấm hút tốt thì người chơi càng ít bị bí và nặng áo.',
-      'Thun lạnh nhẹ, mát và co giãn bốn chiều nên phù hợp cho bóng đá, bóng chuyền. Thun mè có bề mặt nhiều lỗ nhỏ, thoát mồ hôi nhanh và bền màu khi giặt nhiều.',
-      'Nếu đội chơi ngoài trời nắng nhiều, hãy ưu tiên vải có khả năng khô nhanh. Với áo polo của doanh nghiệp, vải cá sấu cho cảm giác lịch sự và ít nhăn hơn.',
-      'Trước khi đặt cả đội, bạn nên xin một mẫu vải nhỏ hoặc áo mặc thử để cảm nhận trực tiếp.',
+      'Bộ sưu tập mới tập trung vào những thiết kế nhẹ nhàng, dễ mặc từ sáng đến tối: đầm suông, váy xếp ly và áo kiểu có phom rộng vừa phải.',
+      'Bảng màu lấy cảm hứng từ sắc lá: trắng kem, xanh lá chuối, be và nâu đất. Các gam này dễ phối với nhau nên một vài món là đủ tạo nhiều bộ trang phục.',
+      'Tất cả sản phẩm là hàng may sẵn, có đủ size từ S đến XXL. Bạn chọn size, thêm vào giỏ hàng và thanh toán khi nhận hàng hoặc chuyển khoản.',
     ],
   },
   {
-    slug: 'cach-chot-size-khi-dat-ao-cho-ca-doi',
-    title: 'Cách chốt size khi đặt áo cho cả đội',
-    excerpt: 'Một bảng đo đơn giản giúp cả đội chọn đúng size ngay lần đầu và tránh phải đổi.',
+    slug: 'cach-chon-size-khi-mua-do-online',
+    section: 'tin-tuc',
+    title: 'Cách chọn size khi mua đồ online để mặc vừa ngay lần đầu',
+    excerpt: 'Ba số đo ngực, eo, mông và vài mẹo nhỏ giúp bạn chọn đúng size mà không cần thử.',
     date: '2026-10-28',
     tag: 'Kích thước',
-    image: 'https://picsum.photos/seed/chot-size/800/500',
+    image: 'https://picsum.photos/seed/chon-size/800/500',
     body: [
-      'Đặt sai size là lý do phổ biến nhất khiến đơn đồng phục phải làm lại. Cách tốt nhất là cho từng thành viên tự đo hoặc mặc thử áo mẫu.',
-      'Hãy đo vòng ngực và chiều dài thân áo mong muốn, sau đó đối chiếu với bảng size của sản phẩm. Nếu nằm giữa hai size, người chơi thích áo ôm nên chọn size nhỏ hơn.',
-      'Lập một bảng tính ghi tên, số áo, size và vị trí thi đấu. Bảng này cũng là căn cứ để in tên và số chính xác.',
+      'Mua đồ online dễ vừa nhất khi bạn có sẵn ba số đo: vòng ngực, vòng eo và vòng mông. Đo sát người, đứng thẳng và không siết chặt thước.',
+      'Đối chiếu số đo với bảng size ở trang sản phẩm. Nếu nằm giữa hai size, hãy chọn size lớn hơn với đầm suông và áo rộng, chọn size nhỏ hơn nếu bạn thích phom ôm.',
+      'Nếu đặt xong mới thấy chưa vừa, bạn có thể đổi size theo quy định đổi hàng của cửa hàng.',
     ],
   },
   {
-    slug: 'cac-phuong-phap-in-ten-so-tren-ao',
-    title: 'So sánh các phương pháp in tên và số trên áo',
-    excerpt: 'In chuyển nhiệt, in lụa và thêu: ưu nhược điểm và khi nào nên chọn từng loại.',
-    date: '2026-10-15',
-    tag: 'In ấn',
-    image: 'https://picsum.photos/seed/in-ten-so/800/500',
-    body: [
-      'In chuyển nhiệt cho hình ảnh sắc nét, phù hợp với logo nhiều màu và số lượng ít. In lụa tiết kiệm hơn khi đặt số lượng lớn và có màu đồng nhất.',
-      'Thêu tạo cảm giác cao cấp cho áo polo và áo khoác nhưng không phù hợp với chi tiết quá nhỏ hoặc vải mỏng co giãn.',
-      'Với áo thi đấu, hãy chọn lớp in mỏng, mềm để không cản trở thoát mồ hôi của vải.',
-    ],
-  },
-  {
-    slug: 'thiet-ke-ao-doi-de-nhan-dien',
-    title: 'Mẹo thiết kế áo đội dễ nhận diện trên sân',
-    excerpt: 'Phối màu tương phản, số áo đủ lớn và logo gọn gàng giúp đội nổi bật hơn.',
-    date: '2026-09-30',
-    tag: 'Thiết kế',
-    image: 'https://picsum.photos/seed/thiet-ke-ao/800/500',
-    body: [
-      'Một mẫu áo dễ nhận diện thường chỉ dùng hai đến ba màu chủ đạo. Màu quá nhiều sẽ làm số áo và logo bị rối mắt.',
-      'Số áo phía sau nên cao ít nhất hai mươi lăm centimet và tương phản mạnh với màu nền để trọng tài và khán giả dễ đọc.',
-      'Hãy chuẩn bị logo dạng vector nếu có. Tệp rõ nét giúp in ra sắc cạnh và tiết kiệm thời gian chỉnh sửa.',
-    ],
-  },
-  {
-    slug: 'bao-quan-ao-the-thao-ben-mau',
-    title: 'Bảo quản áo thể thao để giữ màu và form áo',
-    excerpt: 'Vài thói quen giặt phơi đơn giản giúp áo bền hơn qua nhiều mùa giải.',
-    date: '2026-09-12',
+    slug: 'meo-bao-quan-do-vai-mem-khong-xu-form',
+    section: 'tin-tuc',
+    title: 'Mẹo giặt và bảo quản đồ vải mềm để không xù, không xô form',
+    excerpt: 'Lộn trái, giặt nước lạnh và phơi trong bóng râm giúp quần áo giữ dáng qua nhiều lần mặc.',
+    date: '2026-09-18',
     tag: 'Chăm sóc',
-    image: 'https://picsum.photos/seed/bao-quan-ao/800/500',
+    image: 'https://picsum.photos/seed/bao-quan/800/500',
     body: [
-      'Lộn trái áo trước khi giặt để bảo vệ lớp in. Dùng nước lạnh hoặc nước ấm nhẹ và tránh chất tẩy mạnh.',
-      'Không vắt xoắn và không sấy nhiệt cao vì có thể làm bong lớp in và biến dạng sợi vải.',
-      'Phơi áo trong bóng râm, thoáng gió. Áo khô tự nhiên giữ form tốt hơn nhiều so với áo sấy.',
+      'Đồ vải mềm như voan, lụa tổng hợp hay thun mịn nên được lộn trái và cho vào túi giặt để hạn chế xù và móc sợi.',
+      'Giặt bằng nước lạnh, chất tẩy nhẹ, không vắt xoắn. Đầm và váy nên được vắt nhẹ bằng khăn rồi phơi ngang hoặc treo trên móc có vai rộng.',
+      'Tránh phơi trực tiếp dưới nắng gắt vì màu dễ phai. Khi ủi, dùng nhiệt thấp và ủi mặt trái.',
     ],
   },
   {
-    slug: 'lich-san-xuat-dong-phuc-doi-nhom',
-    title: 'Quy trình và thời gian sản xuất một đơn đồng phục',
-    excerpt: 'Từ lúc gửi yêu cầu đến khi nhận hàng, đơn thường đi qua năm bước rõ ràng.',
-    date: '2026-08-25',
-    tag: 'Quy trình',
-    image: 'https://picsum.photos/seed/quy-trinh/800/500',
+    slug: 'phoi-do-cong-so-voi-ba-mon-co-ban',
+    section: 'thoi-trang',
+    title: 'Phối đồ công sở với ba món cơ bản trong tủ',
+    excerpt: 'Một chiếc sơ mi, một quần ống suông và một chân váy bút chì đủ cho cả tuần đi làm.',
+    date: '2026-11-05',
+    tag: 'Phối đồ',
+    image: 'https://picsum.photos/seed/cong-so/800/500',
     body: [
-      'Sau khi nhận yêu cầu, bộ phận tư vấn gửi báo giá và mẫu thiết kế để bạn duyệt. Chỉ sau khi chốt mẫu và danh sách size, đơn mới được đưa vào sản xuất.',
-      'Thời gian sản xuất phụ thuộc số lượng và độ phức tạp của thiết kế, thường từ bảy đến mười hai ngày làm việc.',
-      'Bạn nên chốt mẫu sớm trước ngày thi đấu ít nhất hai tuần để còn thời gian xử lý nếu cần chỉnh sửa.',
+      'Tủ đồ công sở gọn nhẹ bắt đầu từ ba món: áo sơ mi trắng, quần ống suông tối màu và chân váy bút chì. Từ đây bạn có thể ghép được nhiều bộ khác nhau.',
+      'Thử đổi nhịp bằng phụ kiện: thắt lưng nhỏ, khăn lụa buộc cổ hoặc một đôi giày màu be. Những chi tiết này làm bộ đồ quen thuộc trông mới hơn.',
+      'Chọn chất liệu ít nhăn và có độ đứng vừa phải để bạn vẫn gọn gàng sau cả ngày dài.',
+    ],
+  },
+  {
+    slug: 'chon-dam-hop-dang-nguoi',
+    section: 'thoi-trang',
+    title: 'Chọn đầm hợp dáng người: gợi ý cho từng vóc dáng',
+    excerpt: 'Đầm xòe, đầm suông hay đầm ôm: mỗi kiểu tôn một vóc dáng khác nhau.',
+    date: '2026-10-12',
+    tag: 'Gợi ý',
+    image: 'https://picsum.photos/seed/chon-dam/800/500',
+    body: [
+      'Với vóc dáng quả lê, đầm xòe từ eo giúp cân đối phần hông. Người có vai rộng nên chọn cổ chữ V hoặc cổ vuông để mềm hóa đường vai.',
+      'Đầm suông phù hợp với hầu hết vóc dáng và đặc biệt thoải mái khi đi làm hay đi chơi cả ngày. Thêm thắt lưng nếu bạn muốn nhấn eo.',
+      'Hãy chọn chiều dài đầm theo chiều cao: đầm qua gối cân đối cho người nhỏ nhắn, đầm dài chấm mắt cá tạo cảm giác thanh thoát cho người cao.',
+    ],
+  },
+  {
+    slug: 'xu-huong-mau-sac-thu-dong',
+    section: 'thoi-trang',
+    title: 'Gam màu dễ mặc cho mùa chuyển lạnh',
+    excerpt: 'Xanh rêu, be, nâu caramel và trắng kem: các màu dễ phối và hợp làn da Á Đông.',
+    date: '2026-09-20',
+    tag: 'Xu hướng',
+    image: 'https://picsum.photos/seed/mau-sac/800/500',
+    body: [
+      'Khi trời chuyển lạnh, những gam màu ấm và trầm lên ngôi: xanh rêu, be, nâu caramel và trắng kem. Chúng dễ phối với nhau mà vẫn có chiều sâu.',
+      'Nếu ngại màu sắc, bạn có thể bắt đầu bằng phối hai màu cùng tông, ví dụ áo be với quần nâu nhạt, sau đó thêm một món xanh lá làm điểm nhấn.',
+      'Giữ phần còn lại của bộ đồ đơn giản để món nổi bật được chú ý, và để phụ kiện cùng tông với một trong các màu chính.',
     ],
   },
 ])
 
-export function getPosts(): readonly Post[] {
-  return POSTS
+export function getPosts(section?: PostSection): readonly Post[] {
+  const sorted = [...POSTS].sort((a, b) => b.date.localeCompare(a.date))
+  return section === undefined ? sorted : sorted.filter((post) => post.section === section)
 }
 
 export function getPost(slug: string): Post | null {

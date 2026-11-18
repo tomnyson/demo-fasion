@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import { getCategories, listProducts } from '@/lib/catalog/repository'
-import { getPost, getPosts } from './posts'
+import { getPost, getPosts, POST_SECTIONS } from './posts'
 import { POLICY_SECTIONS } from './policies'
+import { FREE_SHIP_MIN_ITEMS, SHIPPING_FEE } from '@/config/commerce'
+import { formatVnd } from '@/lib/format'
 
 describe('posts', () => {
   const posts = getPosts()
@@ -29,13 +31,35 @@ describe('posts', () => {
   })
 })
 
-describe('policies and brand hygiene', () => {
-  it('has the four policy sections in footer order', () => {
-    expect(POLICY_SECTIONS.map((s) => s.id)).toEqual(['bao-mat', 'giao-nhan', 'doi-tra', 'thanh-toan'])
+describe('post sections', () => {
+  it('splits the posts three and three, newest first within a section', () => {
+    expect(getPosts('tin-tuc')).toHaveLength(3)
+    expect(getPosts('thoi-trang')).toHaveLength(3)
+    expect(getPosts('thoi-trang').every((p) => p.section === 'thoi-trang')).toBe(true)
+    expect(getPosts('tin-tuc').every((p) => p.section === 'tin-tuc')).toBe(true)
+    const dates = getPosts('thoi-trang').map((p) => p.date)
+    expect(dates).toEqual([...dates].sort().reverse())
   })
 
-  it('never mentions the reference brand', () => {
+  it('names each section and its path', () => {
+    expect(POST_SECTIONS['tin-tuc']).toEqual({ name: 'Tin tức', path: '/tin-tuc' })
+    expect(POST_SECTIONS['thoi-trang']).toEqual({ name: 'Thời trang', path: '/thoi-trang' })
+  })
+})
+
+describe('policies and copy hygiene', () => {
+  it('has the five policy sections in footer order', () => {
+    expect(POLICY_SECTIONS.map((s) => s.id)).toEqual(['bao-mat', 'van-chuyen', 'doi-hang', 'thanh-toan', 'huong-dan-mua-hang'])
+  })
+
+  it('states the shipping rule from the commerce constants', () => {
+    const shipping = JSON.stringify(POLICY_SECTIONS.find((s) => s.id === 'van-chuyen'))
+    expect(shipping).toContain(formatVnd(SHIPPING_FEE))
+    expect(shipping).toContain(`${FREE_SHIP_MIN_ITEMS} sản phẩm`)
+  })
+
+  it('has no sportswear, made-to-order or quotation wording', () => {
     const everything = JSON.stringify([getPosts(), POLICY_SECTIONS, getCategories(), listProducts({ pageSize: 64 }).items])
-    expect(everything).not.toMatch(/enzo/i)
+    expect(everything).not.toMatch(/đội nhóm|thể thao|thi đấu|in tên|đặt cọc/i)
   })
 })
