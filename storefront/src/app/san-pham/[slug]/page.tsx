@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import { ProductGrid } from '@/components/product/ProductGrid'
 import { Breadcrumb, type BreadcrumbItem } from '@/components/ui/Breadcrumb'
 import { getCategory, getProduct, getRelatedProducts, listProducts } from '@/lib/catalog/repository'
+import type { Category, Product } from '@/lib/catalog/types'
 import { ProductView } from './ProductView'
 
 interface ProductPageProps {
@@ -12,6 +13,16 @@ interface ProductPageProps {
 
 export function generateStaticParams() {
   return listProducts({ pageSize: Number.MAX_SAFE_INTEGER }).items.map((product) => ({ slug: product.slug }))
+}
+
+function buildCrumbs(product: Product, category: Category | null): readonly BreadcrumbItem[] {
+  const parent = category?.parentSlug ? getCategory(category.parentSlug) : null
+  return [
+    { label: 'Trang chủ', href: '/' },
+    ...(parent ? [{ label: parent.name, href: `/danh-muc/${parent.slug}` }] : []),
+    ...(category ? [{ label: category.name, href: `/danh-muc/${category.slug}` }] : []),
+    { label: product.name },
+  ]
 }
 
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
@@ -25,18 +36,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
   if (product === null) notFound()
 
   const category = getCategory(product.categorySlug)
-  const parent = category?.parentSlug ? getCategory(category.parentSlug) : null
-  const crumbs: readonly BreadcrumbItem[] = [
-    { label: 'Trang chủ', href: '/' },
-    ...(parent ? [{ label: parent.name, href: `/danh-muc/${parent.slug}` }] : []),
-    ...(category ? [{ label: category.name, href: `/danh-muc/${category.slug}` }] : []),
-    { label: product.name },
-  ]
   const related = getRelatedProducts(product)
 
   return (
     <div className="container-site py-8">
-      <Breadcrumb items={crumbs} />
+      <Breadcrumb items={buildCrumbs(product, category)} />
       <div className="mt-6">
         <ProductView product={product} />
       </div>

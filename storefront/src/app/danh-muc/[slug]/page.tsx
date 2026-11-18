@@ -1,13 +1,14 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
 import { Pagination } from '@/components/listing/Pagination'
 import { SortSelect } from '@/components/listing/SortSelect'
 import { ProductGrid } from '@/components/product/ProductGrid'
 import { Breadcrumb, type BreadcrumbItem } from '@/components/ui/Breadcrumb'
+import { SubcategoryChips } from './SubcategoryChips'
 import { parseListingParams } from '@/lib/catalog/listing-params'
 import { getCategories, getCategory, getChildCategories, listProducts } from '@/lib/catalog/repository'
+import type { Category } from '@/lib/catalog/types'
 
 interface CategoryPageProps {
   readonly params: Promise<{ slug: string }>
@@ -16,6 +17,15 @@ interface CategoryPageProps {
 
 export function generateStaticParams() {
   return getCategories().map((category) => ({ slug: category.slug }))
+}
+
+function buildCrumbs(category: Category): readonly BreadcrumbItem[] {
+  const parent = category.parentSlug === null ? null : getCategory(category.parentSlug)
+  return [
+    { label: 'Trang chủ', href: '/' },
+    ...(parent ? [{ label: parent.name, href: `/danh-muc/${parent.slug}` }] : []),
+    { label: category.name },
+  ]
 }
 
 export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
@@ -32,13 +42,6 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
   const { sort, page } = parseListingParams(await searchParams)
   const result = listProducts({ categorySlug: slug, sort, page })
   const children = getChildCategories(slug)
-  const parent = category.parentSlug === null ? null : getCategory(category.parentSlug)
-
-  const crumbs: readonly BreadcrumbItem[] = [
-    { label: 'Trang chủ', href: '/' },
-    ...(parent ? [{ label: parent.name, href: `/danh-muc/${parent.slug}` }] : []),
-    { label: category.name },
-  ]
 
   const hrefFor = (target: number) => {
     const query = new URLSearchParams()
@@ -50,23 +53,10 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
 
   return (
     <div className="container-site py-8">
-      <Breadcrumb items={crumbs} />
+      <Breadcrumb items={buildCrumbs(category)} />
       <h1 className="mt-4 text-[30px] font-black uppercase leading-tight text-navy">{category.name}</h1>
 
-      {children.length > 0 ? (
-        <ul className="mt-4 flex flex-wrap gap-2" aria-label="Danh mục con">
-          {children.map((child) => (
-            <li key={child.slug}>
-              <Link
-                href={`/danh-muc/${child.slug}`}
-                className="inline-block rounded-full border border-line bg-white px-4 py-2 text-sm font-semibold text-ink hover:border-brand hover:text-brand"
-              >
-                {child.name}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      ) : null}
+      <SubcategoryChips categories={children} />
 
       <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm text-muted">{`Hiển thị ${result.from}–${result.to} của ${result.total} kết quả`}</p>
