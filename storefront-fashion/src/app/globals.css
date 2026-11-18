@@ -28,6 +28,14 @@
   padding-inline: 22px;
 }
 
+/* From 850px the quick-contact rail owns the right 100px of the viewport. */
+@media (min-width: 850px) {
+  .container-site {
+    width: min(1180px, 100% - 100px);
+    margin-right: max(100px, (100% - 1180px) / 2);
+  }
+}
+
 body {
   background: #fff;
   color: var(--color-ink);
