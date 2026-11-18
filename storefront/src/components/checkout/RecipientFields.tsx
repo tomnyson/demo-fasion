@@ -1,4 +1,5 @@
-import type { ReactNode } from 'react'
+import type { ComponentProps } from 'react'
+import { FormField } from '@/components/ui/FormField'
 
 const PROVINCES = ['TP. Hồ Chí Minh', 'Hà Nội', 'Đà Nẵng', 'Hải Phòng', 'Cần Thơ', 'Tỉnh/thành khác'] as const
 
@@ -7,40 +8,9 @@ const PAYMENT_OPTIONS = [
   { value: 'bank', label: 'Chuyển khoản ngân hàng' },
 ] as const
 
-const INPUT_CLASS =
-  'w-full rounded-xl border border-line bg-white px-4 py-3 text-sm text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand aria-[invalid=true]:border-accent'
-
 type FieldErrors = Readonly<Record<string, string>>
 
-interface FieldProps {
-  readonly name: string
-  readonly label: string
-  readonly error: string | undefined
-  readonly children: (props: { id: string; name: string; className: string; 'aria-invalid'?: true; 'aria-describedby'?: string }) => ReactNode
-}
-
-function Field({ name, label, error, children }: FieldProps) {
-  const id = `checkout-${name}`
-  const errorId = `${id}-error`
-  return (
-    <div className="flex flex-col gap-1.5">
-      <label htmlFor={id} className="text-sm font-semibold text-ink">
-        {label}
-      </label>
-      {children({
-        id,
-        name,
-        className: INPUT_CLASS,
-        ...(error === undefined ? {} : { 'aria-invalid': true as const, 'aria-describedby': errorId }),
-      })}
-      {error === undefined ? null : (
-        <p id={errorId} className="text-sm text-accent">
-          {error}
-        </p>
-      )}
-    </div>
-  )
-}
+const Field = (props: Omit<ComponentProps<typeof FormField>, 'idPrefix'>) => <FormField idPrefix="checkout" {...props} />
 
 function PaymentFieldset() {
   return (
