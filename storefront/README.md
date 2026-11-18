@@ -45,6 +45,7 @@ API: `POST /api/orders` và `POST /api/quotes`, phản hồi theo một envelope
 
 - **Cần ổ đĩa bền vững.** Đơn hàng và báo giá là tệp JSON Lines dưới `DATA_DIR`, nên máy chủ cần một ổ đĩa lưu trữ lâu dài. Cách lưu này không phù hợp với hosting serverless (hệ thống tệp tạm thời, nhiều instance không chia sẻ dữ liệu). Hãy đổi repository sang database trước khi triển khai kiểu đó.
 - **Giới hạn tần suất phụ thuộc `x-forwarded-for`.** Bộ giới hạn lấy địa chỉ client từ header `x-forwarded-for` và chỉ lưu trong bộ nhớ của từng process. Vì vậy môi trường production phải đặt sau một reverse proxy đáng tin cậy và proxy này phải ghi đè header đó. Nếu không, client có thể tự đặt giá trị để né giới hạn. Chạy nhiều process thì mỗi process đếm riêng.
+- **Reverse proxy phải giữ nguyên `Host`.** Kiểm tra same-origin so sánh header `Origin` với header `Host` của request. Nếu proxy ghi đè `Host`, mọi lần gửi đơn hàng và báo giá sẽ bị từ chối với mã 403, nên hãy cấu hình proxy chuyển tiếp nguyên giá trị `Host` gốc.
 
 ## Ngoài phạm vi
 
