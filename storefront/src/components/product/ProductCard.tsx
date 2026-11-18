@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { Price } from '@/components/ui/Price'
+import { HERO_IMAGE } from '@/config/demo-images'
 import type { Product } from '@/lib/catalog/types'
 import { discountPercent } from '@/lib/format'
 
@@ -8,7 +9,7 @@ const MAX_THUMBS = 6
 
 export function ProductCard({ product }: { readonly product: Product }) {
   const discount = discountPercent(product.price, product.compareAtPrice)
-  const cover = product.colors[0]?.image ?? `https://picsum.photos/seed/${product.slug}/800/800`
+  const cover = product.colors[0]?.image ?? HERO_IMAGE
   return (
     <article className="h-full overflow-hidden rounded-product border border-card-line bg-white transition hover:shadow-card">
       <Link href={`/san-pham/${product.slug}`} className="flex h-full flex-col focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand">

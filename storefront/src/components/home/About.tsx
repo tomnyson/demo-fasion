@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import { SectionHead } from '@/components/ui/SectionHead'
+import { ABOUT_IMAGE } from '@/config/demo-images'
 
 const BENEFITS = [
   { title: 'Thiết kế miễn phí', text: 'Đội ngũ thiết kế lên mẫu theo màu và ý tưởng của đội bạn.' },
@@ -13,7 +14,7 @@ export function About() {
     <section className="bg-soft py-14">
       <div className="container-site grid items-center gap-8 min-[850px]:grid-cols-2">
         <div className="relative aspect-[4/3] overflow-hidden rounded-card">
-          <Image src="https://picsum.photos/seed/vertex-about/800/600" alt="Xưởng may đồng phục thể thao của Vertex Sport" fill sizes="(max-width: 849px) 100vw, 560px" className="object-cover" />
+          <Image src={ABOUT_IMAGE} alt="Xưởng may đồng phục thể thao của Vertex Sport" fill sizes="(max-width: 849px) 100vw, 560px" className="object-cover" />
         </div>
         <div>
           <SectionHead align="left" kicker="Về Vertex Sport" title="ĐỒNG PHỤC THỂ THAO CHO MỌI ĐỘI NHÓM" subtitle="Chúng tôi giúp đội bóng, trường lớp và doanh nghiệp có bộ đồng phục đúng phong cách, đúng ngân sách." />

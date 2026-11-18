@@ -1,7 +1,8 @@
+import { categoryBanner } from '@/config/demo-images'
 import type { Category } from './types'
 
 const make = (slug: string, name: string, parentSlug: string | null): Category =>
-  Object.freeze({ slug, name, parentSlug, image: `https://picsum.photos/seed/${slug}/800/400` })
+  Object.freeze({ slug, name, parentSlug, image: categoryBanner(slug) })
 
 export const CATEGORIES: readonly Category[] = Object.freeze([
   make('ao-bong-da', 'Áo bóng đá', null),

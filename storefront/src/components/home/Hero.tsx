@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import { Button } from '@/components/ui/Button'
+import { HERO_IMAGE } from '@/config/demo-images'
 
 const POINTS = ['Từ 5 bộ', 'Thiết kế miễn phí', 'In tên số logo', 'Sản xuất nhanh'] as const
 
@@ -32,7 +33,7 @@ export function Hero() {
         </div>
         <div className="relative aspect-[4/3] overflow-hidden rounded-card">
           <Image
-            src="https://picsum.photos/seed/vertex-hero/960/720"
+            src={HERO_IMAGE}
             alt="Đội nhóm mặc đồng phục thể thao thiết kế riêng"
             fill
             priority

@@ -1,10 +1,11 @@
 import Image from 'next/image'
 import { SectionHead } from '@/components/ui/SectionHead'
+import { PROJECT_IMAGES } from '@/config/demo-images'
 
 const PROJECTS = [
-  { title: 'Đồng phục đội bóng', seed: 'vertex-project-team' },
-  { title: 'Đồng phục trường lớp', seed: 'vertex-project-school' },
-  { title: 'Đồng phục công ty', seed: 'vertex-project-company' },
+  { title: 'Đồng phục đội bóng', image: PROJECT_IMAGES.team },
+  { title: 'Đồng phục trường lớp', image: PROJECT_IMAGES.school },
+  { title: 'Đồng phục công ty', image: PROJECT_IMAGES.company },
 ] as const
 
 export function Projects() {
@@ -16,7 +17,7 @@ export function Projects() {
           {PROJECTS.map((project) => (
             <li key={project.title} className="overflow-hidden rounded-card bg-white text-ink shadow-card">
               <div className="relative aspect-[4/3]">
-                <Image src={`https://picsum.photos/seed/${project.seed}/600/450`} alt="" fill sizes="(max-width: 849px) 100vw, 380px" className="object-cover" />
+                <Image src={project.image} alt="" fill sizes="(max-width: 849px) 100vw, 380px" className="object-cover" />
               </div>
               <h3 className="p-4 text-lg font-bold">{project.title}</h3>
             </li>

@@ -1,4 +1,5 @@
 import { CATEGORIES } from './categories'
+import { productImage } from '@/config/demo-images'
 import { normalizeText } from '../text'
 import type { Product, ProductColor, ProductKind, Size } from './types'
 
@@ -58,10 +59,10 @@ function categoryName(slug: string): string {
   return category.name
 }
 
-function buildColors(slug: string, count: number): readonly ProductColor[] {
+function buildColors(categorySlug: string, productIndex: number, count: number): readonly ProductColor[] {
   return COLOR_NAMES.slice(0, count).map((name, n) => ({
     name,
-    image: `https://picsum.photos/seed/${slug}-${n + 1}/800/800`,
+    image: productImage(categorySlug, productIndex, n),
   }))
 }
 
@@ -79,7 +80,7 @@ function buildProduct(spec: Spec, index: number, globalIndex: number): Product {
     kind: spec.kind,
     price,
     compareAtPrice,
-    colors: buildColors(slug, spec.colorCount),
+    colors: buildColors(spec.categorySlug, index, spec.colorCount),
     sizes: spec.sizes,
     highlights: [
       'Chất liệu thoáng khí, nhanh khô',
