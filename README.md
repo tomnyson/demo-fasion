@@ -84,3 +84,4 @@ python3 _build/check.py   # kiểm tra: không có <script>, mọi link và #id 
 
 - Đổi màu, font, bo góc: sửa biến trong `:root` ở `assets/css/base.css`.
 - Ảnh đang dùng placeholder `picsum.photos`; thay bằng ảnh sản phẩm thật khi dùng.
+# demo-fasion
