@@ -9,6 +9,9 @@
   --color-muted: #68798B;
   --color-line: #E2EBF4;
   --color-soft: #F3F7FB;
+  --color-card-line: #E8EEF5;
+
+  --background-image-hero: linear-gradient(120deg, #061A39, #082D64 58%, #0B3E82);
 
   --radius-card: 18px;
   --radius-product: 14px;
