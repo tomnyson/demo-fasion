@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { orderInputSchema } from './schema'
-import { valid } from './fixtures'
+import { line, valid } from './fixtures'
 
 const withCustomer = (patch: Record<string, unknown>) => ({ ...valid, customer: { ...valid.customer, ...patch } })
 
@@ -44,6 +44,10 @@ describe('orderInputSchema', () => {
         'Vui lòng nhập địa chỉ (5–200 ký tự).',
       ]),
     )
+  })
+
+  it('rejects the removed Free size', () => {
+    expect(orderInputSchema.safeParse({ ...valid, lines: [{ ...line(1), size: 'Free' }] }).success).toBe(false)
   })
 
   it('strips unknown keys such as client-sent prices', () => {

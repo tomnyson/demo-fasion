@@ -1,12 +1,10 @@
 import { ProductBlock } from '@/components/home/ProductBlock'
 
 const BLOCKS = [
-  { slug: 'ao-bong-da-khong-logo', subtitle: 'Có sẵn, giao nhanh – chọn là mặc được ngay.' },
-  { slug: 'ao-bong-da-thiet-ke', subtitle: 'Mẫu thiết kế riêng cho đội bóng của bạn.' },
-  { slug: 'ao-cau-long', subtitle: 'Nhẹ, thấm hút tốt cho những pha đập cầu.' },
-  { slug: 'ao-pickleball', subtitle: 'Thoải mái, linh hoạt trên mọi mặt sân.' },
-  { slug: 'ao-bong-chuyen', subtitle: 'Co giãn bốn chiều, tự tin bật nhảy.' },
-  { slug: 'ao-bong-ro', subtitle: 'Form rộng, thoáng mát cho trận đấu cường độ cao.' },
+  { slug: 'dam', subtitle: 'Dáng đầm nhẹ nhàng cho công sở và dạo phố.' },
+  { slug: 'vay', subtitle: 'Chân váy dễ phối, mặc cả ngày vẫn thoải mái.' },
+  { slug: 'ao', subtitle: 'Áo mềm mịn, form đẹp, hợp mọi vóc dáng.' },
+  { slug: 'quan', subtitle: 'Quần cạp cao tôn dáng, thoáng mát khi di chuyển.' },
 ] as const
 
 export default function Home() {

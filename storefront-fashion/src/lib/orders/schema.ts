@@ -59,7 +59,7 @@ const note = z
 const lineSchema = z.object(
   {
     productId: z.string({ error: MESSAGES.lines }).max(64, { error: MESSAGES.lines }),
-    size: z.enum(['S', 'M', 'L', 'XL', 'XXL', 'Free'], { error: MESSAGES.lines }),
+    size: z.enum(['S', 'M', 'L', 'XL', 'XXL'], { error: MESSAGES.lines }),
     color: z.string({ error: MESSAGES.lines }).max(64, { error: MESSAGES.lines }),
     quantity: z.number({ error: MESSAGES.lines }).int({ error: MESSAGES.lines }).min(1, { error: MESSAGES.lines }).max(MAX_LINE_QTY, { error: MESSAGES.lines }),
   },

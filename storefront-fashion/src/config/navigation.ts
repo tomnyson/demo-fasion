@@ -11,32 +11,30 @@ function categoryHref(slug: string): string {
   return `/danh-muc/${slug}`
 }
 
-const link = (label: string, slug: string, children?: readonly NavItem[]): NavItem =>
-  Object.freeze({ label, href: categoryHref(slug), ...(children ? { children } : {}) })
+const item = (label: string, href: string, children?: readonly NavItem[]): NavItem =>
+  Object.freeze({ label, href, ...(children ? { children } : {}) })
+
+const category = (label: string, slug: string): NavItem => item(label, categoryHref(slug))
 
 export const MAIN_NAV: readonly NavItem[] = Object.freeze([
-  link('Áo bóng đá', 'ao-bong-da', [
-    link('Không logo', 'ao-bong-da-khong-logo'),
-    link('Thiết kế', 'ao-bong-da-thiet-ke'),
-    link('Câu lạc bộ', 'ao-bong-da-cau-lac-bo'),
-  ]),
-  link('Áo cầu lông', 'ao-cau-long'),
-  link('Pickleball', 'ao-pickleball'),
-  link('Bóng chuyền', 'ao-bong-chuyen'),
-  link('Bóng rổ', 'ao-bong-ro'),
-  link('Polo', 'ao-polo'),
-  link('Phụ kiện', 'phu-kien', [
-    link('Giày', 'giay'),
-    link('Bóng', 'bong'),
-    link('Găng tay', 'gang-tay'),
-    link('Tất', 'tat'),
-  ]),
-  Object.freeze({ label: 'Tin tức', href: '/tin-tuc' }),
+  item('Trang chủ', '/'),
+  item('Sản phẩm', '/san-pham', [category('Đầm', 'dam'), category('Váy', 'vay'), category('Áo', 'ao'), category('Quần', 'quan')]),
+  item('Sale', '/bo-suu-tap/sale'),
+  item('Tin tức', '/tin-tuc'),
+  item('Thời trang', '/thoi-trang'),
+  item('Liên hệ', '/lien-he'),
 ])
 
-export const POLICY_LINKS: readonly NavItem[] = Object.freeze([
-  { label: 'Chính sách bảo mật', href: '/chinh-sach#bao-mat' },
-  { label: 'Chính sách giao nhận', href: '/chinh-sach#giao-nhan' },
-  { label: 'Chính sách đổi trả', href: '/chinh-sach#doi-tra' },
-  { label: 'Chính sách thanh toán', href: '/chinh-sach#thanh-toan' },
+export const FOOTER_ABOUT_LINKS: readonly NavItem[] = Object.freeze([
+  item('Giới thiệu', '/gioi-thieu'),
+  item('Tin thời trang', '/thoi-trang'),
+  item('Liên hệ', '/lien-he'),
+  item('Chính sách bảo mật', '/chinh-sach#bao-mat'),
+])
+
+export const FOOTER_SUPPORT_LINKS: readonly NavItem[] = Object.freeze([
+  item('Hướng dẫn mua hàng', '/chinh-sach#huong-dan-mua-hang'),
+  item('Chính sách vận chuyển', '/chinh-sach#van-chuyen'),
+  item('Phương thức thanh toán', '/chinh-sach#thanh-toan'),
+  item('Quy định đổi hàng', '/chinh-sach#doi-hang'),
 ])

@@ -8,10 +8,10 @@ import { Price } from '@/components/ui/Price'
 import type { Product } from '@/lib/catalog/types'
 
 const PERKS = [
-  'Miễn phí thiết kế mẫu theo ý tưởng của đội',
-  'Miễn phí in tên, số và logo',
   'Giao hàng toàn quốc, nhận hàng kiểm tra rồi thanh toán',
-  'Bảo hành sản phẩm theo chính sách của cửa hàng',
+  'Đổi size hoặc mẫu khác trong 7 ngày nếu chưa qua sử dụng',
+  'Thanh toán khi nhận hàng (COD) hoặc chuyển khoản',
+  'Tư vấn chọn size theo số đo qua Zalo và hotline',
 ] as const
 
 export function ProductView({ product }: { readonly product: Product }) {
@@ -33,7 +33,7 @@ export function ProductView({ product }: { readonly product: Product }) {
         <PurchasePanel product={product} activeColorIndex={activeIndex} onColorChange={setActiveIndex} />
         <section aria-labelledby="perks-title" className="rounded-card border border-line bg-soft p-5">
           <h2 id="perks-title" className="text-base font-black uppercase text-brand-strong">
-            ƯU ĐÃI KHI MUA HÀNG
+            MUA SẮM AN TÂM
           </h2>
           <ul className="mt-3 space-y-2 text-sm text-ink">
             {PERKS.map((perk) => (

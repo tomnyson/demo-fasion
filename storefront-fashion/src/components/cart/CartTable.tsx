@@ -50,7 +50,7 @@ export function CartTable({ lines, onQuantity, onRemove }: CartTableProps) {
                 </td>
                 <td className="p-3 font-bold text-price">{formatVnd(line.lineTotal)}</td>
                 <td className="p-3">
-                  <button type="button" onClick={() => onRemove(line.key)} className="font-semibold text-muted underline underline-offset-2 hover:text-red-700">
+                  <button type="button" onClick={() => onRemove(line.key)} className="font-semibold text-muted underline underline-offset-2 hover:text-price">
                     Xoá
                   </button>
                 </td>

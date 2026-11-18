@@ -8,7 +8,7 @@ async function useOwnClientAddress(page: Page) {
 }
 
 async function addReadyProductAndCheckout(page: Page) {
-  await page.goto('/danh-muc/ao-bong-da-khong-logo'); await page.locator('main article a').first().click()
+  await page.goto('/danh-muc/ao'); await page.locator('main article a').first().click()
   await page.getByRole('radio', { name: 'M', exact: true }).check(); await page.getByRole('button', { name: 'MUA NGAY' }).click()
   await expect(page).toHaveURL(/\/thanh-toan/)
 }
@@ -26,7 +26,7 @@ test('ready product: cart to order success', async ({ page }) => {
   await page.getByRole('button', { name: 'ĐẶT HÀNG' }).click()
   await expect(page).toHaveURL(/\/dat-hang-thanh-cong\/LS-\d{6}-[A-Z2-9]{8}/)
   await expect(page.getByRole('heading', { name: 'Đặt hàng thành công' })).toBeVisible()
-  await expect(page.getByText('159.000 ₫')).toBeVisible()                 // 129.000 + 30.000
+  await expect(page.getByText('259.000 ₫')).toBeVisible()                 // 229.000 + 30.000
   await expect(page.getByText('0901234567')).toHaveCount(0)               // no PII on the success page
   await page.goto('/gio-hang'); await expect(page.getByText('Giỏ hàng của bạn đang trống.')).toBeVisible()
 })
@@ -49,7 +49,7 @@ test('invalid phone shows the field error and keeps the cart', async ({ page }) 
   await page.getByRole('button', { name: 'ĐẶT HÀNG' }).click()
   await expect(page.getByText('Số điện thoại không hợp lệ.')).toBeVisible()
   await expect(page).toHaveURL(/\/thanh-toan/)
-  await page.goto('/gio-hang'); await expect(page.getByTestId('cart-total')).toHaveText('159.000 ₫')
+  await page.goto('/gio-hang'); await expect(page.getByTestId('cart-total')).toHaveText('259.000 ₫')
 })
 
 test('unknown or malformed order code is a 404', async ({ page }) => {

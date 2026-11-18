@@ -3,7 +3,7 @@ import { listProducts } from '@/lib/catalog/repository'
 import { cartReducer } from './reducer'
 import { lineKey, type CartLine } from './types'
 
-const A = listProducts({ categorySlug: 'ao-bong-da-khong-logo' }).items[0]
+const A = listProducts({ categorySlug: 'ao' }).items[0]
 const line = (q: number): CartLine => ({ productId: A.id, size: 'M', color: A.colors[0].name, quantity: q })
 
 describe('cartReducer', () => {

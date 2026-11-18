@@ -49,7 +49,7 @@ export function SizeFieldset({ product, size, showError, onSelect }: SizeFieldse
         ))}
       </div>
       {showError ? (
-        <p role="alert" className="mt-2 text-sm font-semibold text-red-700">
+        <p role="alert" className="mt-2 text-sm font-semibold text-price">
           Vui lòng chọn size.
         </p>
       ) : null}

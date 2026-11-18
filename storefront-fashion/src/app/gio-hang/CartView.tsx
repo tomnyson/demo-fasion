@@ -12,7 +12,7 @@ export function CartView() {
     return (
       <div className="flex flex-col items-start gap-4">
         <p className="text-ink">Giỏ hàng của bạn đang trống.</p>
-        <Button variant="soft" href="/danh-muc/ao-bong-da-khong-logo">
+        <Button variant="soft" href="/danh-muc/ao">
           TIẾP TỤC MUA SẮM
         </Button>
       </div>

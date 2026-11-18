@@ -9,7 +9,7 @@ import { CartProvider, useCart } from './CartProvider'
 import { CartSummary } from './CartSummary'
 import { CartTable } from './CartTable'
 
-const PRODUCT = listProducts({ categorySlug: 'ao-bong-da-khong-logo' }).items[0]
+const PRODUCT = listProducts({ categorySlug: 'ao' }).items[0]
 const line = (quantity: number): CartLine => ({ productId: PRODUCT.id, size: 'M', color: PRODUCT.colors[0].name, quantity })
 
 function AddThree() {
@@ -37,7 +37,7 @@ describe('CartIcon', () => {
 describe('CartSummary', () => {
   it('shows shipping fee, total and how many more items earn free shipping', () => {
     render(<CartSummary totals={computeTotals([line(2)])} />)
-    expect(screen.getByTestId('cart-total').textContent).toBe('288.000 ₫')
+    expect(screen.getByTestId('cart-total').textContent).toBe('488.000 ₫')
     expect(screen.getByText('30.000 ₫')).toBeTruthy()
     expect(screen.getByText('Mua thêm 7 sản phẩm để được miễn phí giao hàng.')).toBeTruthy()
     expect(screen.getByRole('link', { name: 'TIẾN HÀNH THANH TOÁN' }).getAttribute('href')).toBe('/thanh-toan')

@@ -4,7 +4,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { listProducts } from '@/lib/catalog/repository'
 import { CartProvider, useCart } from './CartProvider'
 
-const A = listProducts({ categorySlug: 'ao-bong-da-khong-logo' }).items[0]
+const A = listProducts({ categorySlug: 'ao' }).items[0]
 
 function Probe() {
   const { totals, hydrated, add } = useCart()
@@ -45,6 +45,16 @@ describe('CartProvider', () => {
     )
     await screen.findByText('items:3')
     expect(JSON.parse(localStorage.getItem('la-studio-cart-v1')!)).toEqual(stored)
+  })
+
+  it('ignores a cart saved under the old shop key', async () => {
+    localStorage.setItem('old-shop-cart-v1', JSON.stringify([{ productId: A.id, size: 'M', color: A.colors[0].name, quantity: 3 }]))
+    render(
+      <CartProvider>
+        <Probe />
+      </CartProvider>,
+    )
+    await screen.findByText('items:0')
   })
 
   it('throws when useCart is used outside the provider', () => {

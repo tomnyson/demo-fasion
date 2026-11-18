@@ -3,7 +3,7 @@ import { listProducts } from '@/lib/catalog/repository'
 import { loadCart, saveCart } from './storage'
 import type { CartLine } from './types'
 
-const A = listProducts({ categorySlug: 'ao-bong-da-khong-logo' }).items[0]
+const A = listProducts({ categorySlug: 'ao' }).items[0]
 const line = (q: number): CartLine => ({ productId: A.id, size: 'M', color: A.colors[0].name, quantity: q })
 const store = (v: string | null) => ({ getItem: () => v })
 
@@ -23,8 +23,13 @@ describe('loadCart', () => {
     expect(loadCart(store(JSON.stringify([{ ...line(1), quantity: -4 }, { ...line(1), quantity: 'x' }])))).toEqual([])
   })
 
+  it('drops lines from the old shop and the removed Free size', () => {
+    expect(loadCart(store(JSON.stringify([{ productId: 'ENO-BD-01', size: 'M', color: 'Đỏ', quantity: 2 }])))).toEqual([])
+    expect(loadCart(store(JSON.stringify([{ productId: A.id, size: 'Free', color: A.colors[0].name, quantity: 1 }])))).toEqual([])
+  })
+
   it('keeps a line for any product that has the chosen size and colour', () => {
-    const anyProduct = listProducts({ pageSize: 100 }).items.at(-1)!
+    const anyProduct = listProducts({ pageSize: 48 }).items.at(-1)!
     expect(loadCart(store(JSON.stringify([{ productId: anyProduct.id, size: anyProduct.sizes[0], color: anyProduct.colors[0].name, quantity: 1 }])))).toHaveLength(1)
   })
 

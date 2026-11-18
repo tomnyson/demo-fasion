@@ -35,7 +35,7 @@ describe('CheckoutForm', () => {
     renderForm()
     expect(await screen.findByText('Giỏ hàng của bạn đang trống.')).toBeTruthy()
     expect(screen.queryByRole('button', { name: 'ĐẶT HÀNG' })).toBeNull()
-    expect(screen.getByRole('link', { name: /TIẾP TỤC MUA SẮM/ }).getAttribute('href')).toBe('/danh-muc/ao-bong-da-khong-logo')
+    expect(screen.getByRole('link', { name: /TIẾP TỤC MUA SẮM/ }).getAttribute('href')).toBe('/danh-muc/ao')
   })
 
   it('renders labelled fields, COD by default and the order summary', async () => {
@@ -45,7 +45,7 @@ describe('CheckoutForm', () => {
       expect(screen.getByLabelText(label)).toBeTruthy()
     expect(screen.getByRole('radio', { name: 'Thanh toán khi nhận hàng (COD)' })).toHaveProperty('checked', true)
     expect(screen.getByRole('radio', { name: 'Chuyển khoản ngân hàng' })).toHaveProperty('checked', false)
-    expect(screen.getByTestId('checkout-total').textContent).toBe('288.000 ₫')
+    expect(screen.getByTestId('checkout-total').textContent).toBe('488.000 ₫')
   })
 
   it('leaves validation to the server and renders its field errors', async () => {

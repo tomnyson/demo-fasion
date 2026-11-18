@@ -16,10 +16,8 @@ export function generateStaticParams() {
 }
 
 function buildCrumbs(product: Product, category: Category | null): readonly BreadcrumbItem[] {
-  const parent = category?.parentSlug ? getCategory(category.parentSlug) : null
   return [
     { label: 'Trang chủ', href: '/' },
-    ...(parent ? [{ label: parent.name, href: `/danh-muc/${parent.slug}` }] : []),
     ...(category ? [{ label: category.name, href: `/danh-muc/${category.slug}` }] : []),
     { label: product.name },
   ]

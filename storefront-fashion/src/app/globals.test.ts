@@ -13,7 +13,7 @@ describe('globals.css theme', () => {
     ['line', '#E3EDD3'],
     ['ink', '#1F2A14'],
     ['muted', '#66705A'],
-    ['price', '#E5484D'],
+    ['price', '#C62828'],
     ['card-line', '#E3EDD3'],
   ])('defines --color-%s as %s', (token, hex) => {
     expect(css).toContain(`--color-${token}: ${hex};`)

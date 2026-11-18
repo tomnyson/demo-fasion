@@ -1,12 +1,12 @@
-import type { SIZE_TABLES } from '@/config/size-chart'
+import { SIZE_COLUMNS, SIZE_ROWS } from '@/config/size-chart'
 
-export function SizeTable({ table }: { readonly table: (typeof SIZE_TABLES)[number] }) {
+export function SizeTable() {
   return (
-    <div role="tabpanel" id="size-panel" aria-labelledby={`size-tab-${table.id}`} className="mt-4 overflow-x-auto">
+    <div role="tabpanel" id="size-panel" aria-labelledby="size-tab-nu" className="mt-4 overflow-x-auto">
       <table className="w-full text-left text-sm">
         <thead>
           <tr className="border-b border-line text-muted">
-            {table.columns.map((column) => (
+            {SIZE_COLUMNS.map((column) => (
               <th key={column} scope="col" className="py-2 pr-4 font-semibold">
                 {column}
               </th>
@@ -14,13 +14,14 @@ export function SizeTable({ table }: { readonly table: (typeof SIZE_TABLES)[numb
           </tr>
         </thead>
         <tbody>
-          {table.rows.map((row) => (
+          {SIZE_ROWS.map((row) => (
             <tr key={row.size} className="border-b border-line">
               <th scope="row" className="py-2 pr-4 font-bold text-ink">
                 {row.size}
               </th>
-              <td className="py-2 pr-4">{row.a}</td>
-              <td className="py-2">{row.b}</td>
+              <td className="py-2 pr-4">{row.bust}</td>
+              <td className="py-2 pr-4">{row.waist}</td>
+              <td className="py-2">{row.hip}</td>
             </tr>
           ))}
         </tbody>

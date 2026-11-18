@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test'
 
 test.describe('product detail', () => {
   test('every product can be added to the cart', async ({ page }) => {
-    await page.goto('/danh-muc/ao-cau-long')
+    await page.goto('/danh-muc/vay')
     await page.locator('main article a').first().click()
     await expect(page).toHaveURL(/\/san-pham\//)
     await expect(page.getByRole('button', { name: 'THÊM VÀO GIỎ' })).toBeVisible()

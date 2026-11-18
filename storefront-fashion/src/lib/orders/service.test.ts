@@ -18,8 +18,8 @@ beforeEach(() => {
 describe('placeOrder', () => {
   it('recomputes prices on the server and ignores client amounts', async () => {
     const r = await placeOrder({ ...valid, total: 1, lines: [{ ...line(2), unitPrice: 1 }] }, deps)
-    expect(r.ok && [r.order.subtotal, r.order.shipping, r.order.total]).toEqual([258000, 30000, 288000])
-    expect(r.ok && r.order.lines[0]).toMatchObject({ unitPrice: 129000, lineTotal: 258000, name: A.name })
+    expect(r.ok && [r.order.subtotal, r.order.shipping, r.order.total]).toEqual([458000, 30000, 488000])
+    expect(r.ok && r.order.lines[0]).toMatchObject({ unitPrice: 229000, lineTotal: 458000, name: A.name })
     expect(r.ok && r.order.code).toMatch(/^LS-261118-/)
     expect(r.ok && r.order.createdAt).toBe('2026-11-18T03:00:00.000Z')
     expect(r.ok && r.order.customer.phone).toBe('0901234567')

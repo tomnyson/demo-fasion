@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 
 const INPUT_CLASS =
-  'w-full rounded-xl border border-line bg-white px-4 py-3 text-sm text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-strong aria-[invalid=true]:border-red-700'
+  'w-full rounded-xl border border-line bg-white px-4 py-3 text-sm text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-strong aria-[invalid=true]:border-price'
 
 interface FormFieldProps {
   readonly idPrefix: string
@@ -27,7 +27,7 @@ export function FormField({ idPrefix, name, label, error, children }: FormFieldP
         ...(error === undefined ? {} : { 'aria-invalid': true as const, 'aria-describedby': errorId }),
       })}
       {error === undefined ? null : (
-        <p id={errorId} className="text-sm text-red-700">
+        <p id={errorId} className="text-sm text-price">
           {error}
         </p>
       )}

@@ -1,13 +1,31 @@
 'use client'
 
 import { useRef, useState } from 'react'
-import { SIZE_TABLES } from '@/config/size-chart'
+import { MEASURE_STEPS } from '@/config/size-chart'
 import { SizeTable } from './SizeTable'
+
+const TABS = [
+  { id: 'nu', label: 'Size nữ' },
+  { id: 'cach-do', label: 'Cách đo' },
+] as const
+
+type TabId = (typeof TABS)[number]['id']
+
+function MeasureSteps() {
+  return (
+    <div role="tabpanel" id="size-panel" aria-labelledby="size-tab-cach-do" className="mt-4">
+      <ul className="list-disc space-y-2 pl-5 text-sm text-ink">
+        {MEASURE_STEPS.map((step) => (
+          <li key={step}>{step}</li>
+        ))}
+      </ul>
+    </div>
+  )
+}
 
 export function SizeChartDialog() {
   const dialogRef = useRef<HTMLDialogElement>(null)
-  const [activeId, setActiveId] = useState<string>(SIZE_TABLES[0].id)
-  const table = SIZE_TABLES.find((t) => t.id === activeId) ?? SIZE_TABLES[0]
+  const [activeId, setActiveId] = useState<TabId>('nu')
 
   return (
     <>
@@ -20,10 +38,10 @@ export function SizeChartDialog() {
       </button>
       <dialog ref={dialogRef} aria-labelledby="size-chart-title" className="m-auto w-[min(92vw,560px)] rounded-card p-6 backdrop:bg-ink/60">
         <h2 id="size-chart-title" className="text-xl font-black uppercase text-ink">
-          Bảng size thể thao
+          Bảng size
         </h2>
-        <div role="tablist" aria-label="Loại size" className="mt-4 flex flex-wrap gap-2">
-          {SIZE_TABLES.map((t) => (
+        <div role="tablist" aria-label="Loại bảng" className="mt-4 flex flex-wrap gap-2">
+          {TABS.map((t) => (
             <button
               key={t.id}
               type="button"
@@ -38,8 +56,8 @@ export function SizeChartDialog() {
             </button>
           ))}
         </div>
-        <SizeTable table={table} />
-        <p className="mt-4 text-sm text-muted">Nếu chiều cao hoặc cân nặng ở giữa hai size, hãy chọn size lớn hơn.</p>
+        {activeId === 'nu' ? <SizeTable /> : <MeasureSteps />}
+        <p className="mt-4 text-sm text-muted">Nếu số đo nằm giữa hai size, hãy chọn size lớn hơn.</p>
         <button
           type="button"
           onClick={() => dialogRef.current?.close()}

@@ -69,7 +69,7 @@ export default async function OrderSuccessPage({ params }: OrderSuccessProps) {
       </div>
       <OrderLines order={order} />
       {order.payment === 'bank' ? <BankTransfer code={order.code} /> : null}
-      <Button variant="soft" href="/danh-muc/ao-bong-da-khong-logo" className="self-start">
+      <Button variant="soft" href="/danh-muc/ao" className="self-start">
         TIẾP TỤC MUA SẮM
       </Button>
     </div>

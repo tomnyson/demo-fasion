@@ -44,7 +44,7 @@ function EmptyCart() {
   return (
     <div className="flex flex-col items-start gap-4">
       <p className="text-ink">Giỏ hàng của bạn đang trống.</p>
-      <Button variant="soft" href="/danh-muc/ao-bong-da-khong-logo">
+      <Button variant="soft" href="/danh-muc/ao">
         TIẾP TỤC MUA SẮM
       </Button>
     </div>
@@ -64,7 +64,7 @@ export function CheckoutForm() {
       <form noValidate onSubmit={handleSubmit} className="flex flex-col gap-4 rounded-card border border-line bg-white p-5 shadow-card">
         <RecipientFields errors={errors} />
         {formError === null ? null : (
-          <p role="alert" className="text-sm font-semibold text-red-700">
+          <p role="alert" className="text-sm font-semibold text-price">
             {formError}
           </p>
         )}

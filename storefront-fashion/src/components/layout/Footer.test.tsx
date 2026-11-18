@@ -5,7 +5,7 @@ import { Footer } from './Footer'
 describe('Footer', () => {
   it('shows the policy and contact columns', () => {
     render(<Footer />)
-    expect(screen.getByText('CHÍNH SÁCH MUA HÀNG')).toBeTruthy()
+    expect(screen.getByText('HỖ TRỢ KHÁCH HÀNG')).toBeTruthy()
     expect(screen.getByText('THÔNG TIN LIÊN HỆ')).toBeTruthy()
     expect(screen.getByRole('link', { name: /0900 000 000/ }).getAttribute('href')).toBe('tel:0900000000')
   })
@@ -16,9 +16,11 @@ describe('Footer', () => {
     expect(document.body.textContent).not.toMatch(/enzo/i)
   })
 
-  it('links the four policy anchors', () => {
+  it('links the about and support columns', () => {
     render(<Footer />)
     expect(screen.getByRole('link', { name: 'Chính sách bảo mật' }).getAttribute('href')).toBe('/chinh-sach#bao-mat')
+    expect(screen.getByRole('link', { name: 'Quy định đổi hàng' }).getAttribute('href')).toBe('/chinh-sach#doi-hang')
+    expect(screen.getByRole('link', { name: 'Tin thời trang' }).getAttribute('href')).toBe('/thoi-trang')
   })
 
   it('links to the contact page', () => {

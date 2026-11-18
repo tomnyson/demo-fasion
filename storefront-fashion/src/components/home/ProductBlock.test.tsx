@@ -4,9 +4,9 @@ import { ProductBlock } from './ProductBlock'
 
 describe('ProductBlock', () => {
   it('shows four product cards and a link to the category', () => {
-    render(<ProductBlock categorySlug="ao-cau-long" subtitle="x" />)
+    render(<ProductBlock categorySlug="ao" subtitle="x" />)
     expect(screen.getAllByRole('article')).toHaveLength(4)
-    expect(screen.getByRole('link', { name: /XEM TẤT CẢ/ })).toHaveProperty('pathname', '/danh-muc/ao-cau-long')
+    expect(screen.getByRole('link', { name: /XEM TẤT CẢ/ })).toHaveProperty('pathname', '/danh-muc/ao')
   })
 
   it('renders nothing for an unknown category', () => {

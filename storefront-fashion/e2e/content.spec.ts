@@ -14,11 +14,10 @@ test('unknown post is a 404', async ({ page }) => {
   expect((await page.goto('/tin-tuc/khong-ton-tai'))?.status()).toBe(404)
 })
 
+// Sections that exist on /chinh-sach today; the others arrive with the policy page rewrite.
 const POLICIES = [
   { link: 'Chính sách bảo mật', id: 'bao-mat' },
-  { link: 'Chính sách giao nhận', id: 'giao-nhan' },
-  { link: 'Chính sách đổi trả', id: 'doi-tra' },
-  { link: 'Chính sách thanh toán', id: 'thanh-toan' },
+  { link: 'Phương thức thanh toán', id: 'thanh-toan' },
 ]
 
 for (const { link, id } of POLICIES) {

@@ -9,7 +9,7 @@ import { PurchasePanel } from './PurchasePanel'
 const push = vi.fn()
 vi.mock('next/navigation', () => ({ useRouter: () => ({ push }) }))
 
-const A = listProducts({ categorySlug: 'ao-bong-da-khong-logo' }).items[0]
+const A = listProducts({ categorySlug: 'ao' }).items[0]
 
 function Harness({ onColor }: { readonly onColor?: (i: number) => void }) {
   const [index, setIndex] = useState(0)
