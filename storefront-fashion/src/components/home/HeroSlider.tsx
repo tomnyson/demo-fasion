@@ -55,7 +55,7 @@ export function HeroSlider({ slides, intervalMs = 5000 }: { readonly slides: rea
   const [index, setIndex] = useState(0)
   const [hovered, setHovered] = useState(false)
   const [focused, setFocused] = useState(false)
-  const [touchStartX, setTouchStartX] = useState<number | null>(null)
+  const [touchStart, setTouchStart] = useState<{ readonly x: number; readonly y: number } | null>(null)
   const count = slides.length
   const go = (delta: number) => setIndex((i) => (i + delta + count) % count)
 
@@ -67,9 +67,11 @@ export function HeroSlider({ slides, intervalMs = 5000 }: { readonly slides: rea
     if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setFocused(false)
   }
   const onTouchEnd = (event: TouchEvent<HTMLElement>) => {
-    const delta = event.changedTouches[0].clientX - (touchStartX ?? event.changedTouches[0].clientX)
-    setTouchStartX(null)
-    if (Math.abs(delta) >= SWIPE_DISTANCE) go(delta < 0 ? 1 : -1)
+    const end = event.changedTouches[0]
+    const dx = end.clientX - (touchStart?.x ?? end.clientX)
+    const dy = end.clientY - (touchStart?.y ?? end.clientY)
+    setTouchStart(null)
+    if (Math.abs(dx) >= SWIPE_DISTANCE && Math.abs(dx) > Math.abs(dy)) go(dx < 0 ? 1 : -1)
   }
 
   return (
@@ -81,7 +83,7 @@ export function HeroSlider({ slides, intervalMs = 5000 }: { readonly slides: rea
       onMouseLeave={() => setHovered(false)}
       onFocus={() => setFocused(true)}
       onBlur={onBlur}
-      onTouchStart={(event) => setTouchStartX(event.touches[0].clientX)}
+      onTouchStart={(event) => setTouchStart({ x: event.touches[0].clientX, y: event.touches[0].clientY })}
       onTouchEnd={onTouchEnd}
     >
       {slides.map((slide, i) => (
@@ -90,10 +92,10 @@ export function HeroSlider({ slides, intervalMs = 5000 }: { readonly slides: rea
       {count > 1 ? (
         <div className="pointer-events-none container-site absolute inset-0">
           <div className="relative h-full">
-            <button type="button" aria-label="Slide trước" onClick={() => go(-1)} className={`${ARROW} absolute left-0 top-1/3`}>
+            <button type="button" aria-label="Slide trước" onClick={() => go(-1)} className={`${ARROW} absolute left-0 top-4`}>
               <span aria-hidden="true">‹</span>
             </button>
-            <button type="button" aria-label="Slide sau" onClick={() => go(1)} className={`${ARROW} absolute right-0 top-1/3`}>
+            <button type="button" aria-label="Slide sau" onClick={() => go(1)} className={`${ARROW} absolute right-0 top-4`}>
               <span aria-hidden="true">›</span>
             </button>
             <div className="absolute bottom-3 right-0">

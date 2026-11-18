@@ -79,6 +79,17 @@ describe('HeroSlider', () => {
     expect(current()).toBe('A')
   })
 
+  it('ignores a mostly vertical swipe so scrolling the page does not flip slides', () => {
+    render(<HeroSlider slides={slides} />)
+    const touch = (x: number, y: number) => ({ changedTouches: [{ clientX: x, clientY: y }], touches: [{ clientX: x, clientY: y }] })
+    fireEvent.touchStart(region(), touch(300, 100))
+    fireEvent.touchEnd(region(), touch(240, 400))
+    expect(current()).toBe('A')
+    fireEvent.touchStart(region(), touch(300, 100))
+    fireEvent.touchEnd(region(), touch(200, 130))
+    expect(current()).toBe('B')
+  })
+
   it('shows no controls and no timer with a single slide', () => {
     render(<HeroSlider slides={[slides[0]]} />)
     expect(screen.queryByRole('button')).toBeNull()

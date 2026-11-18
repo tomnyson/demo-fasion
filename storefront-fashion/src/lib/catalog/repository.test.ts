@@ -95,6 +95,12 @@ describe('catalogue data integrity', () => {
     expect(all.every((p) => getCategory(p.categorySlug) !== null)).toBe(true)
   })
 
+  it('gives each product its own frozen highlights array', () => {
+    expect(all[0].highlights).not.toBe(all[1].highlights)
+    expect(new Set(all.map((p) => p.highlights)).size).toBe(all.length)
+    expect(all.every((p) => Object.isFrozen(p.highlights))).toBe(true)
+  })
+
   it('names only the dresses with the word Đầm', () => {
     for (const p of all) expect(p.name.includes('Đầm')).toBe(p.categorySlug === 'dam')
   })

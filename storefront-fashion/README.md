@@ -1,11 +1,8 @@
 # Lá Studio Storefront
 
-Website bán đồ thể thao đội nhóm xây bằng Next.js 16 (App Router), React 19, Tailwind CSS 4 và TypeScript. Thương hiệu **Lá Studio**, dữ liệu và ảnh chỉ là mẫu (ảnh placeholder từ picsum.photos).
+Website bán thời trang nữ xây bằng Next.js 16 (App Router), React 19, Tailwind CSS 4 và TypeScript. Tông trắng và xanh lá chuối. Thương hiệu **Lá Studio**, dữ liệu và ảnh chỉ là mẫu (ảnh placeholder từ picsum.photos).
 
-Hỗ trợ hai mô hình bán trên cùng một catalogue:
-
-- **Hàng có sẵn (`ready`)**: chọn size, màu, số lượng, giỏ hàng, thanh toán, trang đặt hàng thành công.
-- **Hàng thiết kế theo yêu cầu (`custom`)**: không có giỏ hàng, khách gọi điện, nhắn Zalo hoặc gửi form nhận báo giá.
+Mọi sản phẩm mua qua giỏ hàng: chọn màu, size, số lượng, thanh toán COD hoặc chuyển khoản, trang đặt hàng thành công. Trang chủ có slider, ba khối sản phẩm (nổi bật, best seller, hàng mới về). Mọi trang có cột sáu nút liên hệ nhanh (Trang chủ, Hotline, Zalo, Messenger, Shopee, Tiktok): cột dọc bên phải từ 850px, thanh ngang dưới đáy trên điện thoại. Từ 850px, trang chừa 100px bên phải cho cột này.
 
 ## Chạy dự án
 
@@ -13,13 +10,13 @@ Yêu cầu Node.js và pnpm.
 
 ```bash
 pnpm install
-pnpm dev             # chạy chế độ phát triển, http://localhost:3000
+pnpm dev             # chạy chế độ phát triển, http://localhost:3001
 pnpm build           # build production
 pnpm start           # chạy bản đã build
 pnpm lint            # ESLint
-pnpm test            # unit test (Vitest)
+pnpm test            # unit test (Vitest), gồm kiểm tra vệ sinh mã nguồn
 pnpm test:coverage   # unit test kèm coverage, ngưỡng 80% cho src/lib và src/components
-pnpm e2e             # test end-to-end (Playwright), tự build và chạy server ở cổng 3100
+pnpm e2e             # test end-to-end (Playwright), tự build và chạy server ở cổng 3101
 ```
 
 Lần đầu chạy e2e có thể cần `pnpm exec playwright install chromium`.
@@ -28,24 +25,41 @@ Lần đầu chạy e2e có thể cần `pnpm exec playwright install chromium`.
 
 | Việc cần làm | Tệp |
 |---|---|
-| Đổi thương hiệu: tên, hotline, email, địa chỉ, liên kết mạng xã hội | `src/config/site.ts` |
-| Đổi sản phẩm và danh mục | `src/lib/catalog/products.ts` (danh mục: `src/lib/catalog/categories.ts`) |
-| Đổi quy tắc bán hàng: phí giao hàng, ngưỡng miễn phí giao hàng, giới hạn số lượng | `src/config/commerce.ts` |
+| Đổi thương hiệu: tên, hotline, email, địa chỉ, liên kết Zalo, Messenger, Facebook, Shopee, Tiktok (cột liên hệ nhanh lấy từ đây) | `src/config/site.ts` |
+| Đổi màu, bo góc, bóng đổ (design token) | `src/app/globals.css` |
+| Đổi sản phẩm và nhãn `featured`, `best-seller`, `new` | `src/lib/catalog/products.ts` (danh mục: `src/lib/catalog/categories.ts`) |
+| Đổi slide trang chủ | `src/config/slides.ts` |
+| Đổi quy tắc giao hàng: phí giao hàng, ngưỡng miễn phí | `src/config/commerce.ts` |
 | Đổi menu và liên kết chính sách | `src/config/navigation.ts` |
 | Đổi bài viết và nội dung chính sách | `src/lib/content/posts.ts`, `src/lib/content/policies.ts` |
-| Đổi màu, bo góc, bóng đổ (design token) | `src/app/globals.css` |
 
-## Lưu trữ đơn hàng và báo giá
+## Giả định cần khách xác nhận
 
-Chưa có database. Đơn hàng và yêu cầu báo giá được ghi thành tệp JSON Lines (mỗi dòng một bản ghi) trong thư mục `DATA_DIR` (mặc định `.data/`) thông qua interface repository trong `src/lib/orders` và `src/lib/quotes`. Muốn dùng database thật, viết một repository mới theo cùng interface rồi thay vào chỗ đang dùng, phần còn lại của ứng dụng không phải đổi.
+Các điểm dưới đây do người xây tự quyết khi chưa có câu trả lời của khách. Sai điểm nào thì sửa điểm đó.
 
-API: `POST /api/orders` và `POST /api/quotes`, phản hồi theo một envelope `{ success, data, error }`. Mỗi endpoint validate dữ liệu bằng schema zod, kiểm tra same-origin và giới hạn 5 request / 60 giây / IP.
+| # | Giả định | Nếu sai thì |
+|---|---|---|
+| G1 | Đây là khách khác với Vertex Sport: hai site sống song song. | Xoá `storefront/` sau khi site mới xong. |
+| G2 | Khách bán hàng may sẵn; mọi sản phẩm mua qua giỏ hàng. Không có báo giá, không đặt may. | Lấy lại luồng báo giá từ `storefront/`. |
+| G3 | Hàng bán là thời trang nữ (như site tham chiếu). | Đổi dữ liệu mẫu và tên danh mục. |
+| G4 | Xanh lá chuối = `#CFE89A` (đo từ ảnh mẫu khách gửi). | Đổi một token màu. |
+| G5 | Chưa có tên thương hiệu, logo, ảnh thật: dùng thương hiệu mẫu **Lá Studio**. | Thay trong `src/config/site.ts`. |
+| G6 | Chưa có link Shopee, Tiktok, Zalo, Messenger thật: dùng link mẫu. | Thay trong `src/config/site.ts`. |
+| G7 | Phí giao hàng 30.000 ₫, miễn phí từ 9 sản phẩm (giữ từ bản đồ thể thao đội nhóm). Ngưỡng này có thể không hợp với hàng may sẵn mua lẻ. | Đổi `SHIPPING_FEE` và `FREE_SHIP_MIN_ITEMS` trong `src/config/commerce.ts`, hoặc đổi sang ngưỡng theo giá trị đơn. |
+| G8 | Màu giá và nhãn giảm giá là `#C62828` thay vì `#E5484D` đề xuất ban đầu, vì màu đỏ nhạt hơn không đạt tương phản 4,5:1 trên nền trắng. | Đổi token `price` trong `src/app/globals.css`, nhớ kiểm tra lại tương phản. |
+| G9 | Toàn bộ nội dung chính sách, bài viết và trang giới thiệu là văn bản mẫu. | Khách phải thay hoặc duyệt trước khi mở bán. |
+
+## Lưu trữ đơn hàng
+
+Chưa có database. Đơn hàng được ghi thành tệp JSON Lines (mỗi dòng một bản ghi) trong thư mục `DATA_DIR` (mặc định `.data/`) thông qua interface repository trong `src/lib/orders`. Muốn dùng database thật, viết một repository mới theo cùng interface rồi thay vào chỗ đang dùng, phần còn lại của ứng dụng không phải đổi.
+
+API: `POST /api/orders`, phản hồi theo envelope `{ success, data, error }`. Endpoint validate dữ liệu bằng schema zod, kiểm tra same-origin và giới hạn 5 request / 60 giây / IP.
 
 ## Lưu ý khi triển khai
 
-- **Cần ổ đĩa bền vững.** Đơn hàng và báo giá là tệp JSON Lines dưới `DATA_DIR`, nên máy chủ cần một ổ đĩa lưu trữ lâu dài. Cách lưu này không phù hợp với hosting serverless (hệ thống tệp tạm thời, nhiều instance không chia sẻ dữ liệu). Hãy đổi repository sang database trước khi triển khai kiểu đó.
+- **Cần ổ đĩa bền vững.** Đơn hàng là tệp JSON Lines dưới `DATA_DIR`, nên máy chủ cần một ổ đĩa lưu trữ lâu dài. Cách lưu này không phù hợp với hosting serverless (hệ thống tệp tạm thời, nhiều instance không chia sẻ dữ liệu). Hãy đổi repository sang database trước khi triển khai kiểu đó.
 - **Giới hạn tần suất phụ thuộc `x-forwarded-for`.** Bộ giới hạn lấy địa chỉ client từ header `x-forwarded-for` và chỉ lưu trong bộ nhớ của từng process. Vì vậy môi trường production phải đặt sau một reverse proxy đáng tin cậy và proxy này phải ghi đè header đó. Nếu không, client có thể tự đặt giá trị để né giới hạn. Chạy nhiều process thì mỗi process đếm riêng.
-- **Reverse proxy phải giữ nguyên `Host`.** Kiểm tra same-origin so sánh header `Origin` với header `Host` của request. Nếu proxy ghi đè `Host`, mọi lần gửi đơn hàng và báo giá sẽ bị từ chối với mã 403, nên hãy cấu hình proxy chuyển tiếp nguyên giá trị `Host` gốc.
+- **Reverse proxy phải giữ nguyên `Host`.** Kiểm tra same-origin so sánh header `Origin` với header `Host` của request. Nếu proxy ghi đè `Host`, mọi lần gửi đơn hàng sẽ bị từ chối với mã 403, nên hãy cấu hình proxy chuyển tiếp nguyên giá trị `Host` gốc.
 
 ## Ngoài phạm vi
 
@@ -53,10 +67,8 @@ Các phần sau chưa làm, cần plan riêng nếu muốn bổ sung:
 
 - Admin
 - Đăng nhập và tài khoản
-- Wishlist
-- Tích điểm
 - Cổng thanh toán online
 - Database thật
 - Gửi email hoặc Zalo tự động
 - Đa ngôn ngữ
-- Bình luận blog
+- Bộ lọc sản phẩm theo size, màu, giá

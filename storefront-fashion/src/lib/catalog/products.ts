@@ -112,7 +112,7 @@ function buildProduct(spec: Spec, index: number, globalIndex: number): Product {
     colors: buildColors(slug, 3 + (index % 3)),
     sizes: SIZES,
     tags: Object.freeze(tagsFor(index)),
-    highlights: spec.highlights,
+    highlights: Object.freeze([...spec.highlights]),
     description: `${name} là mẫu ${spec.noun} thuộc bộ sưu tập mẫu của Lá Studio. Thiết kế nhẹ nhàng, chất liệu dễ chịu và đường may gọn gàng, phù hợp để mặc hằng ngày. Hãy xem bảng size và chọn theo số đo ngực, eo, mông của bạn để có form vừa vặn nhất.`,
     createdAt: new Date(BASE_DATE - globalIndex * DAY_MS).toISOString(),
     popularity: ((globalIndex * 37 + 11) % 100) + 1,

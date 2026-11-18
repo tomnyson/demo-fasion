@@ -47,13 +47,22 @@ describe('Button', () => {
     expect(onClick).toHaveBeenCalledOnce()
   })
 
+  const classesOf = (name: string) => screen.getByRole('button', { name }).className.split(/\s+/)
+
   it('styles primary as white on brand-strong', () => {
     render(<Button variant="primary">A</Button>)
-    expect(screen.getByRole('button', { name: 'A' }).className).toContain('bg-brand-strong')
+    expect(classesOf('A')).toEqual(expect.arrayContaining(['bg-brand-strong', 'text-white']))
   })
 
-  it('styles soft as brand-ink on brand', () => {
+  it('styles soft as brand-ink on brand, not brand-strong', () => {
     render(<Button variant="soft">B</Button>)
-    expect(screen.getByRole('button', { name: 'B' }).className).toMatch(/bg-brand\b.*text-brand-ink|text-brand-ink.*bg-brand\b/)
+    const classes = classesOf('B')
+    expect(classes).toEqual(expect.arrayContaining(['bg-brand', 'text-brand-ink']))
+    expect(classes).not.toContain('bg-brand-strong')
+  })
+
+  it('styles outline as a brand-strong border on white', () => {
+    render(<Button variant="outline">C</Button>)
+    expect(classesOf('C')).toEqual(expect.arrayContaining(['border', 'border-brand-strong', 'bg-white', 'text-brand-strong']))
   })
 })

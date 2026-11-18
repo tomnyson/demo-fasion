@@ -23,8 +23,9 @@ describe('QuickContactRail', () => {
   it('uses the brand colours and never white text', () => {
     render(<QuickContactRail />)
     const nav = screen.getByRole('navigation', { name: 'Liên hệ nhanh' })
-    expect(nav.querySelector('a')?.className).toMatch(/bg-brand\b/)
-    expect(nav.querySelector('a')?.className).toContain('text-brand-ink')
+    const classes = nav.querySelector('a')?.className.split(/\s+/) ?? []
+    expect(classes).toContain('bg-brand')
+    expect(classes).toContain('text-brand-ink')
     expect(nav.innerHTML).not.toContain('text-white')
   })
 

@@ -96,3 +96,23 @@ for (const width of [850, 1024, 1280, 1440])
     await scrollEach('button:has-text("ĐẶT HÀNG")')
     await noScroll('/thanh-toan')
   })
+
+test('desktop rail stays reachable in a short window', async ({ page, isMobile }) => {
+  test.skip(isMobile)
+  await page.setViewportSize({ width: 1280, height: 500 })
+  await page.goto('/')
+  const rail = page.getByRole('navigation', { name: 'Liên hệ nhanh' })
+  const railBox = (await rail.boundingBox())!
+  expect(railBox.y).toBeGreaterThanOrEqual(0)
+  expect(railBox.y + railBox.height).toBeLessThanOrEqual(500)
+  const links = rail.getByRole('link')
+  await expect(links).toHaveCount(6)
+  for (let i = 0; i < 6; i += 1) {
+    await links.nth(i).scrollIntoViewIfNeeded()
+    const box = (await links.nth(i).boundingBox())!
+    expect(box.y, `link ${i + 1} top`).toBeGreaterThanOrEqual(0)
+    expect(box.y + box.height, `link ${i + 1} bottom`).toBeLessThanOrEqual(500)
+    expect(box.x + box.width, `link ${i + 1} right`).toBeLessThanOrEqual(1280)
+  }
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true)
+})

@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, test, type Page } from '@playwright/test'
 
 const SLIDER = { name: 'Bộ sưu tập nổi bật' }
 
@@ -52,3 +52,33 @@ for (const width of [850, 1024, 1280, 1440])
       for (const box of await target.evaluateAll((els) => els.map((el) => el.getBoundingClientRect().toJSON())))
         expect(intersects(box, rail as DOMRect), `slider element at ${width}px`).toBe(false)
   })
+
+for (const width of [850, 1024, 1280, 1440])
+  test(`slider arrows never touch the text panel at ${width}px`, async ({ page, isMobile }) => {
+    test.skip(isMobile)
+    await page.setViewportSize({ width, height: 900 })
+    await expectArrowsClearOfPanel(page)
+  })
+
+test('slider arrows never touch the text panel on the phone', async ({ page, isMobile }) => {
+  test.skip(!isMobile)
+  await expectArrowsClearOfPanel(page)
+})
+
+async function expectArrowsClearOfPanel(page: Page) {
+  await page.goto('/')
+  const slider = page.getByRole('region', SLIDER)
+  const slides = await slider.getByRole('heading').count()
+  for (let i = 0; i < slides; i += 1) {
+    const panel = (await slider.getByRole('heading').nth(i).locator('xpath=..').boundingBox()) ?? null
+    if (panel === null) {
+      await slider.getByRole('button', { name: 'Slide sau' }).click()
+      continue
+    }
+    for (const name of ['Slide trước', 'Slide sau']) {
+      const arrow = (await slider.getByRole('button', { name }).boundingBox())!
+      expect(intersects(arrow as DOMRect, panel as DOMRect), `${name} vs panel of slide ${i + 1}`).toBe(false)
+    }
+    await slider.getByRole('button', { name: 'Slide sau' }).click()
+  }
+}

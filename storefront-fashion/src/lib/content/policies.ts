@@ -30,9 +30,9 @@ export const POLICY_SECTIONS: readonly PolicySection[] = Object.freeze([
     id: 'doi-hang',
     title: 'Quy định đổi hàng',
     paragraphs: [
-      'Sản phẩm được đổi size hoặc đổi mẫu trong vòng bảy ngày kể từ ngày nhận nếu còn nguyên tem, chưa giặt và chưa qua sử dụng.',
-      'Sản phẩm lỗi do nhà sản xuất được đổi mới hoặc hoàn tiền, chi phí vận chuyển do chúng tôi chịu.',
-      'Hàng giảm giá được áp dụng quy định đổi như hàng nguyên giá. Đồ lót và phụ kiện đã mở bao bì không được đổi vì lý do vệ sinh.',
+      'Nội dung dưới đây là điều khoản mẫu, cần được cửa hàng xác nhận trước khi áp dụng.',
+      'Quần áo được đổi một lần cho mỗi đơn hàng trong vòng 7 ngày kể từ ngày nhận, với điều kiện chưa mặc, chưa giặt và còn nguyên tem mác.',
+      'Để đổi hàng, vui lòng liên hệ hotline hoặc Zalo của cửa hàng và cung cấp mã đơn hàng cùng hình ảnh sản phẩm.',
     ],
   },
   {
