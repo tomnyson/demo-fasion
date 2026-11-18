@@ -34,4 +34,11 @@ describe('MobileMenu', () => {
     document.removeEventListener('click', stopNavigation)
     expect(screen.queryAllByRole('link')).toHaveLength(0)
   })
+
+  it('offers search and the quote CTA inside the panel', async () => {
+    const user = userEvent.setup(); render(<MobileMenu items={MAIN_NAV} />)
+    await user.click(screen.getByRole('button', { name: 'Mở menu' }))
+    expect(screen.getByLabelText('Tìm sản phẩm').getAttribute('name')).toBe('q')
+    expect(screen.getByRole('link', { name: 'NHẬN BÁO GIÁ' })).toHaveProperty('pathname', '/bao-gia')
+  })
 })

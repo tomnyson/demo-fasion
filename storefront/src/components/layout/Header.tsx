@@ -9,7 +9,7 @@ const ITEM = 'block px-3 py-2 text-[13px] font-bold uppercase text-ink hover:tex
 
 function DesktopNav() {
   return (
-    <nav aria-label="Danh mục chính" className="hidden lg:block">
+    <nav aria-label="Danh mục chính" className="hidden xl:block">
       <ul className="flex items-center">
         {MAIN_NAV.map((item) => (
           <li key={item.href} className="group relative">
@@ -59,7 +59,7 @@ export function Header({ cartSlot }: { readonly cartSlot?: ReactNode }) {
   return (
     <header className="sticky top-0 z-40 border-b border-line bg-white">
       <div className="container-site flex h-[78px] items-center gap-4">
-        <Link href="/" className="mr-auto flex flex-col leading-tight lg:mr-2" aria-label={SITE.name}>
+        <Link href="/" className="mr-auto flex flex-col leading-tight xl:mr-2" aria-label={SITE.name}>
           <span className="text-2xl font-black uppercase text-navy">{SITE.name}</span>
           <span className="hidden text-[11px] text-muted sm:block">{SITE.tagline}</span>
         </Link>

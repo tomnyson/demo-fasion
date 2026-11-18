@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import type { NavItem } from '@/config/navigation'
+import { Button } from '@/components/ui/Button'
 
 export function MobileMenu({ items }: { readonly items: readonly NavItem[] }) {
   const [open, setOpen] = useState(false)
@@ -18,7 +19,7 @@ export function MobileMenu({ items }: { readonly items: readonly NavItem[] }) {
   }, [open])
 
   return (
-    <div className="lg:hidden">
+    <div className="xl:hidden">
       <button
         type="button"
         aria-label="Mở menu"
@@ -64,6 +65,7 @@ export function MobileMenu({ items }: { readonly items: readonly NavItem[] }) {
                 </li>
               ))}
             </ul>
+            <Button variant="red" href="/bao-gia" className="mt-5 w-full">NHẬN BÁO GIÁ</Button>
           </nav>
         </div>
       ) : null}
