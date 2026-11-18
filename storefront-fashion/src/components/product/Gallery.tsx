@@ -12,10 +12,10 @@ export interface GalleryProps {
 
 export function Gallery({ name, colors, activeIndex, onSelect }: GalleryProps) {
   const active = colors[activeIndex] ?? colors[0]
-  if (active === undefined) return <div className="aspect-square rounded-card bg-soft" />
+  if (active === undefined) return <div className="aspect-[3/4] rounded-card bg-soft" />
   return (
     <div>
-      <div className="relative aspect-square overflow-hidden rounded-card bg-soft">
+      <div className="relative aspect-[3/4] overflow-hidden rounded-card bg-soft">
         <Image src={active.image} alt={`${name} – ${active.name}`} fill priority sizes="(max-width: 849px) 100vw, 560px" className="object-cover" />
       </div>
       <ul className="mt-3 flex flex-wrap gap-2">

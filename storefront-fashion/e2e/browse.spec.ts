@@ -1,13 +1,36 @@
 import { expect, test } from '@playwright/test'
 
 test.describe('browse', () => {
-  test('listing shows one page and sorts', async ({ page }) => {
+  test('category listing shows one page and sorts', async ({ page }) => {
     await page.goto('/danh-muc/ao')
     await expect(page.getByText('Hiển thị 1–12 của 12 kết quả')).toBeVisible()
     await expect(page.locator('main article')).toHaveCount(12)
     await page.getByRole('combobox', { name: 'Sắp xếp' }).selectOption('price-asc')
     await expect(page).toHaveURL(/sort=price-asc/)
     await expect(page).not.toHaveURL(/page=/)
+  })
+
+  test('all-products page paginates', async ({ page }) => {
+    await page.goto('/san-pham')
+    await expect(page.getByText('Hiển thị 1–16 của 48 kết quả')).toBeVisible()
+    await page.getByRole('link', { name: '3', exact: true }).click()
+    await expect(page.getByText('Hiển thị 33–48 của 48 kết quả')).toBeVisible()
+  })
+
+  test('collection pages list the right products', async ({ page }) => {
+    await page.goto('/bo-suu-tap/sale')
+    await expect(page.getByText('Hiển thị 1–16 của 16 kết quả')).toBeVisible()
+    await expect(page.locator('main article').filter({ hasText: /-\d+%/ })).toHaveCount(16)
+    await page.goto('/bo-suu-tap/hang-moi')
+    await expect(page.getByText('Hiển thị 1–12 của 12 kết quả')).toBeVisible()
+  })
+
+  test('hand-typed URLs fail safely', async ({ page }) => {
+    for (const url of ['/bo-suu-tap/khong-co', '/danh-muc/ao-bong-da', '/danh-muc/phu-kien'])
+      expect((await page.goto(url))?.status(), url).toBe(404)
+    expect((await page.goto('/san-pham?page=999&sort=xyz'))?.status()).toBe(200)
+    await expect(page.getByText('Hiển thị 33–48 của 48 kết quả')).toBeVisible()
+    expect((await page.goto('/bo-suu-tap/sale?page=abc'))?.status()).toBe(200)
   })
 
   test('garbage listing params fall back instead of failing', async ({ page }) => {
