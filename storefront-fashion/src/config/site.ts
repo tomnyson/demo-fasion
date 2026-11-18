@@ -1,0 +1,15 @@
+export const SITE = {
+  name: 'Lá Studio',
+  tagline: 'Thời trang nữ mỗi ngày',
+  hotlineDisplay: '0900 000 000',
+  hotlineTel: 'tel:0900000000',
+  zaloUrl: 'https://zalo.me/0900000000',
+  messengerUrl: 'https://m.me/',
+  facebookUrl: 'https://facebook.com/',
+  shopeeUrl: 'https://shopee.vn/',
+  tiktokUrl: 'https://www.tiktok.com/',
+  email: 'hello@lastudio.example',
+  address: '123 Đường Mẫu, Phường Mẫu, TP. Hồ Chí Minh',
+  mapUrl: 'https://maps.google.com/',
+  openingHours: '8:30 – 21:00 tất cả các ngày trong tuần',
+} as const

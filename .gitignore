@@ -8,3 +8,7 @@ storefront/coverage/
 storefront/test-results/
 storefront/playwright-report/
 .DS_Store
+storefront-fashion/.data/
+storefront-fashion/coverage/
+storefront-fashion/test-results/
+storefront-fashion/playwright-report/
