@@ -20,6 +20,7 @@ Người đặt hàng không trả lời trực tiếp trong buổi thiết kế
 | G4 | Xanh lá chuối = `#CFE89A` (đo từ ảnh mẫu khách gửi). | Đổi một token màu. |
 | G5 | Chưa có tên thương hiệu, logo, ảnh thật: dùng thương hiệu mẫu **Lá Studio**. | Thay trong `src/config/site.ts`. |
 | G6 | Chưa có link Shopee, Tiktok, Zalo, Messenger thật: dùng link mẫu. | Thay trong `src/config/site.ts`. |
+| G7 | Phí giao hàng 30.000 ₫, miễn phí từ 9 sản phẩm (giữ từ bản đồ thể thao đội nhóm). Ngưỡng này có thể không hợp với hàng may sẵn mua lẻ. | Đổi `SHIPPING_FEE` và `FREE_SHIP_MIN_ITEMS` trong `src/config/commerce.ts`, hoặc đổi sang ngưỡng theo giá trị đơn. |
 
 ## 3. Mục tiêu, ngoài phạm vi, điều phải tránh
 
