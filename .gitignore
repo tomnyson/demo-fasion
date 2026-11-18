@@ -1,0 +1,10 @@
+node_modules/
+.next/
+.playwright-mcp/
+__pycache__/
+.superpowers/
+storefront/.data/
+storefront/coverage/
+storefront/test-results/
+storefront/playwright-report/
+.DS_Store
