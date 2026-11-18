@@ -85,6 +85,7 @@ function buildProduct(spec: Spec, index: number, globalIndex: number): Product {
       'Chất liệu thoáng khí, nhanh khô',
       'Đường may chắc chắn, bền màu sau nhiều lần giặt',
       spec.kind === 'custom' ? 'Nhận in tên, số và logo theo yêu cầu' : 'Có sẵn hàng, giao nhanh toàn quốc',
+      'Bảng size rõ ràng, dễ chọn đúng số đo',
     ],
     description: `${name} là sản phẩm mẫu của Vertex Sport, chú trọng sự thoải mái và độ bền khi vận động hằng ngày.`,
     createdAt: new Date(BASE_DATE - globalIndex * DAY_MS).toISOString(),

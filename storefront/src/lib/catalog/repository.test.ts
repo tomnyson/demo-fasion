@@ -8,6 +8,12 @@ import {
   listProducts,
 } from '@/lib/catalog/repository'
 
+describe('catalogue data integrity', () => {
+  it('gives every product four highlights', () => {
+    for (const product of listProducts({ pageSize: 64 }).items) expect(product.highlights).toHaveLength(4)
+  })
+})
+
 describe('catalogue listing', () => {
   it('has the expected category and product counts', () => {
     expect(getCategories()).toHaveLength(14)

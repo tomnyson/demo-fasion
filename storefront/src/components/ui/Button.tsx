@@ -32,18 +32,18 @@ export function Button({ variant, href, type = 'button', disabled, onClick, chil
     )
   if (isWebUrl(href))
     return (
-      <a href={href} target="_blank" rel="noopener noreferrer" className={classes}>
+      <a href={href} target="_blank" rel="noopener noreferrer" onClick={onClick} className={classes}>
         {children}
       </a>
     )
   if (href.startsWith('tel:'))
     return (
-      <a href={href} className={classes}>
+      <a href={href} onClick={onClick} className={classes}>
         {children}
       </a>
     )
   return (
-    <Link href={href} className={classes}>
+    <Link href={href} onClick={onClick} className={classes}>
       {children}
     </Link>
   )

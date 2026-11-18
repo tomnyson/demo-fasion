@@ -37,7 +37,7 @@ function DesktopNav() {
 
 function SearchForm() {
   return (
-    <form action="/tim-kiem" method="get" role="search" className="hidden items-center rounded-full border border-line bg-soft xl:flex">
+    <form action="/tim-kiem" method="get" role="search" className="hidden items-center rounded-full border border-line bg-soft focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-brand xl:flex">
       <input
         type="search"
         name="q"

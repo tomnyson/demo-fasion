@@ -18,7 +18,7 @@ export function QuantityStepper({ value, onChange }: QuantityStepperProps) {
         readOnly
         aria-label="Số lượng"
         value={value}
-        className="w-10 bg-transparent text-center text-sm font-semibold tabular-nums outline-none"
+        className="w-10 bg-transparent text-center text-sm font-semibold tabular-nums focus-visible:outline-2 focus-visible:outline-brand"
       />
       <button type="button" aria-label="Tăng số lượng" disabled={value >= MAX_LINE_QTY} onClick={() => onChange(value + 1)} className={BUTTON}>
         <span aria-hidden="true">+</span>

@@ -32,4 +32,18 @@ describe('Button', () => {
     await userEvent.setup().click(screen.getByRole('button', { name: 'C' }))
     expect(onClick).toHaveBeenCalledOnce()
   })
+
+  it.each([
+    ['internal', '/bao-gia'],
+    ['external', 'https://zalo.me/1'],
+    ['tel', 'tel:0900000000'],
+  ])('fires onClick on %s links', async (_kind, href) => {
+    const onClick = vi.fn()
+    render(<Button variant="red" href={href} onClick={onClick}>L</Button>)
+    const stopNavigation = (event: Event) => event.preventDefault()
+    document.addEventListener('click', stopNavigation)
+    await userEvent.setup().click(screen.getByRole('link', { name: 'L' }))
+    document.removeEventListener('click', stopNavigation)
+    expect(onClick).toHaveBeenCalledOnce()
+  })
 })

@@ -52,7 +52,9 @@ describe('POST /api/orders', () => {
   })
 
   it('returns field errors for invalid input', async () => {
-    const bad = await (await POST(post({ ...valid, lines: [] }))).json()
+    const res = await POST(post({ ...valid, lines: [] }))
+    expect(res.status).toBe(400)
+    const bad = await res.json()
     expect(bad).toMatchObject({ success: false, data: null, error: { code: 'VALIDATION', fields: { lines: 'Giỏ hàng không hợp lệ.' } } })
   })
 

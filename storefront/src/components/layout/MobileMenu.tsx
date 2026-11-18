@@ -1,9 +1,10 @@
 'use client'
 
-import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import type { NavItem } from '@/config/navigation'
 import { Button } from '@/components/ui/Button'
+import { MobileNavList } from './MobileNavList'
+import { MobileSearchForm } from './MobileSearchForm'
 
 export function MobileMenu({ items }: { readonly items: readonly NavItem[] }) {
   const [open, setOpen] = useState(false)
@@ -41,31 +42,9 @@ export function MobileMenu({ items }: { readonly items: readonly NavItem[] }) {
                 <path d="M6 6l12 12M18 6L6 18" />
               </svg>
             </button>
-            <form action="/tim-kiem" method="get" role="search" className="mb-3 flex items-center rounded-full border border-line bg-soft">
-              <input type="search" name="q" placeholder="Tìm sản phẩm" aria-label="Tìm sản phẩm" className="min-w-0 flex-1 bg-transparent px-4 py-2 text-sm outline-none" />
-              <button type="submit" className="px-4 py-2 text-sm font-semibold text-brand">Tìm</button>
-            </form>
-            <ul className="divide-y divide-line">
-              {items.map((item) => (
-                <li key={item.href} className="py-1">
-                  <Link href={item.href} onClick={close} className="block py-2.5 text-sm font-bold uppercase text-ink">
-                    {item.label}
-                  </Link>
-                  {item.children ? (
-                    <ul className="mb-2 ml-3 border-l border-line pl-3">
-                      {item.children.map((child) => (
-                        <li key={child.href}>
-                          <Link href={child.href} onClick={close} className="block py-2 text-sm text-muted hover:text-brand">
-                            {child.label}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : null}
-                </li>
-              ))}
-            </ul>
-            <Button variant="red" href="/bao-gia" className="mt-5 w-full">NHẬN BÁO GIÁ</Button>
+            <MobileSearchForm />
+            <MobileNavList items={items} onNavigate={close} />
+            <Button variant="red" href="/bao-gia" onClick={close} className="mt-5 w-full">NHẬN BÁO GIÁ</Button>
           </nav>
         </div>
       ) : null}
