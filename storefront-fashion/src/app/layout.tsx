@@ -3,7 +3,6 @@ import { Roboto } from "next/font/google";
 import "./globals.css";
 import { CartIcon } from "@/components/cart/CartIcon";
 import { CartProvider } from "@/components/cart/CartProvider";
-import { CtaBand } from "@/components/layout/CtaBand";
 import { FloatingContacts } from "@/components/layout/FloatingContacts";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
@@ -31,7 +30,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <TopBar />
           <Header cartSlot={<CartIcon />} />
           <main className="flex-1">{children}</main>
-          <CtaBand />
           <Footer />
           <FloatingContacts />
           <MobileContactBar />

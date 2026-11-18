@@ -17,3 +17,13 @@ test('mobile shows the contact bar', async ({ page, isMobile }) => {
   test.skip(!isMobile); await page.goto('/')
   await expect(page.getByRole('link', { name: 'Chat Zalo' })).toBeVisible()
 })
+
+test('removed pages answer 404', async ({ page }) => {
+  expect((await page.goto('/bao-gia'))?.status()).toBe(404)
+})
+
+test('contact page shows the shop details without a form', async ({ page }) => {
+  await page.goto('/lien-he')
+  await expect(page.getByRole('heading', { level: 1, name: 'Liên hệ' })).toBeVisible()
+  await expect(page.locator('main form')).toHaveCount(0)
+})

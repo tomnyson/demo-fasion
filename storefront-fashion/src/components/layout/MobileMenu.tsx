@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import type { NavItem } from '@/config/navigation'
-import { Button } from '@/components/ui/Button'
 import { MobileNavList } from './MobileNavList'
 import { MobileSearchForm } from './MobileSearchForm'
 
@@ -44,7 +43,6 @@ export function MobileMenu({ items }: { readonly items: readonly NavItem[] }) {
             </button>
             <MobileSearchForm />
             <MobileNavList items={items} onNavigate={close} />
-            <Button variant="primary" href="/bao-gia" onClick={close} className="mt-5 w-full">NHẬN BÁO GIÁ</Button>
           </nav>
         </div>
       ) : null}

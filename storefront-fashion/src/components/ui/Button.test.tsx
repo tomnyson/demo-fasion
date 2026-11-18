@@ -5,7 +5,7 @@ import { Button } from './Button'
 
 describe('Button', () => {
   it('renders a link when href is given', () => {
-    render(<Button variant="primary" href="/bao-gia">A</Button>)
+    render(<Button variant="primary" href="/gio-hang">A</Button>)
     expect(screen.getByRole('link', { name: 'A' })).toBeTruthy()
   })
 
@@ -34,7 +34,7 @@ describe('Button', () => {
   })
 
   it.each([
-    ['internal', '/bao-gia'],
+    ['internal', '/gio-hang'],
     ['external', 'https://zalo.me/1'],
     ['tel', 'tel:0900000000'],
   ])('fires onClick on %s links', async (_kind, href) => {

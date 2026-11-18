@@ -1,6 +1,6 @@
 import { CATEGORIES } from './categories'
 import { normalizeText } from '../text'
-import type { Product, ProductColor, ProductKind, Size } from './types'
+import type { Product, ProductColor, Size } from './types'
 
 const SHIRT_SIZES: readonly Size[] = ['S', 'M', 'L', 'XL', 'XXL']
 const FREE_SIZE: readonly Size[] = ['Free']
@@ -17,7 +17,6 @@ interface Spec {
   readonly categorySlug: string
   readonly prefix: string
   readonly count: number
-  readonly kind: ProductKind
   readonly colorCount: number
   readonly prices: (index: number) => { price: number; compareAtPrice: number | null }
   readonly sizes: readonly Size[]
@@ -27,14 +26,14 @@ const fixedPrice = (price: number, compareAtPrice: number | null) => () => ({ pr
 const stepPrice = (start: number, step: number) => (i: number) => ({ price: start + step * i, compareAtPrice: null })
 
 const shirt = (categorySlug: string, prefix: string, count: number, price: Spec['prices']): Spec => ({
-  categorySlug, prefix, count, kind: 'custom', colorCount: 3, prices: price, sizes: SHIRT_SIZES,
+  categorySlug, prefix, count, colorCount: 3, prices: price, sizes: SHIRT_SIZES,
 })
 const accessory = (categorySlug: string, prefix: string, start: number, step: number): Spec => ({
-  categorySlug, prefix, count: 4, kind: 'ready', colorCount: 3, prices: stepPrice(start, step), sizes: FREE_SIZE,
+  categorySlug, prefix, count: 4, colorCount: 3, prices: stepPrice(start, step), sizes: FREE_SIZE,
 })
 
 const SPECS: readonly Spec[] = [
-  { ...shirt('ao-bong-da-khong-logo', 'BD-KL', 20, fixedPrice(129000, 139000)), kind: 'ready', colorCount: 6 },
+  { ...shirt('ao-bong-da-khong-logo', 'BD-KL', 20, fixedPrice(129000, 139000)), colorCount: 6 },
   shirt('ao-bong-da-thiet-ke', 'BD-TK', 4, fixedPrice(139000, null)),
   shirt('ao-bong-da-cau-lac-bo', 'BD-CLB', 4, fixedPrice(139000, null)),
   shirt('ao-cau-long', 'CL', 4, fixedPrice(139000, null)),
@@ -76,7 +75,6 @@ function buildProduct(spec: Spec, index: number, globalIndex: number): Product {
     sku,
     name,
     categorySlug: spec.categorySlug,
-    kind: spec.kind,
     price,
     compareAtPrice,
     colors: buildColors(slug, spec.colorCount),
@@ -84,7 +82,7 @@ function buildProduct(spec: Spec, index: number, globalIndex: number): Product {
     highlights: [
       'Chất liệu thoáng khí, nhanh khô',
       'Đường may chắc chắn, bền màu sau nhiều lần giặt',
-      spec.kind === 'custom' ? 'Nhận in tên, số và logo theo yêu cầu' : 'Có sẵn hàng, giao nhanh toàn quốc',
+      'Có sẵn hàng, giao nhanh toàn quốc',
       'Bảng size rõ ràng, dễ chọn đúng số đo',
     ],
     description: `${name} là sản phẩm mẫu của Lá Studio, chú trọng sự thoải mái và độ bền khi vận động hằng ngày.`,

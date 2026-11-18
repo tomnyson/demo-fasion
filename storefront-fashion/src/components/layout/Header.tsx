@@ -2,7 +2,6 @@ import Link from 'next/link'
 import type { ReactNode } from 'react'
 import { MAIN_NAV } from '@/config/navigation'
 import { SITE } from '@/config/site'
-import { Button } from '@/components/ui/Button'
 import { MobileMenu } from './MobileMenu'
 
 const ITEM = 'block whitespace-nowrap px-1.5 py-2 text-[13px] font-bold uppercase text-ink hover:text-brand-strong focus-visible:text-brand-strong'
@@ -67,7 +66,6 @@ export function Header({ cartSlot }: { readonly cartSlot?: ReactNode }) {
         <div className="flex items-center gap-1.5 min-[480px]:gap-3">
           <SearchForm />
           {cartSlot}
-          <Button variant="primary" href="/bao-gia" className="px-3 text-xs min-[480px]:px-5 min-[480px]:text-sm">NHẬN BÁO GIÁ</Button>
           <MobileMenu items={MAIN_NAV} />
         </div>
       </div>

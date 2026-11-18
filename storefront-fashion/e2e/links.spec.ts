@@ -16,7 +16,7 @@ test('no page logs a console error', async ({ page }) => {
   const errors: string[] = []
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()))
   page.on('pageerror', (e) => errors.push(e.message))
-  for (const url of ['/', '/danh-muc/ao-bong-da', '/gio-hang', '/thanh-toan', '/bao-gia', '/tin-tuc', '/chinh-sach']) {
+  for (const url of ['/', '/danh-muc/ao-bong-da', '/gio-hang', '/thanh-toan', '/tin-tuc', '/chinh-sach']) {
     await page.goto(url)
   }
   expect(errors).toEqual([])

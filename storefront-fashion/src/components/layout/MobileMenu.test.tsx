@@ -35,21 +35,10 @@ describe('MobileMenu', () => {
     expect(screen.queryAllByRole('link')).toHaveLength(0)
   })
 
-  it('offers search and the quote CTA inside the panel', async () => {
+  it('offers search inside the panel and no price-request button', async () => {
     const user = userEvent.setup(); render(<MobileMenu items={MAIN_NAV} />)
     await user.click(screen.getByRole('button', { name: 'Mở menu' }))
     expect(screen.getByLabelText('Tìm sản phẩm').getAttribute('name')).toBe('q')
-    expect(screen.getByRole('link', { name: 'NHẬN BÁO GIÁ' })).toHaveProperty('pathname', '/bao-gia')
-  })
-
-  it('closes the panel when the quote CTA is clicked', async () => {
-    const user = userEvent.setup(); render(<MobileMenu items={MAIN_NAV} />)
-    const toggle = screen.getByRole('button', { name: 'Mở menu' })
-    await user.click(toggle)
-    const stopNavigation = (event: Event) => event.preventDefault()
-    document.addEventListener('click', stopNavigation)
-    await user.click(screen.getByRole('link', { name: 'NHẬN BÁO GIÁ' }))
-    document.removeEventListener('click', stopNavigation)
-    expect(toggle.getAttribute('aria-expanded')).toBe('false')
+    expect(screen.queryByRole('link', { name: /NHẬN/ })).toBeNull()
   })
 })

@@ -9,10 +9,10 @@ describe('Header', () => {
       expect(screen.getAllByRole('link', { name: new RegExp(label) }).length).toBeGreaterThan(0)
   })
 
-  it('points dropdown children and the CTA to the right routes', () => {
+  it('points dropdown children to the right routes and has no price-request button', () => {
     render(<Header />)
     expect(screen.getByRole('link', { name: 'Không logo' })).toHaveProperty('pathname', '/danh-muc/ao-bong-da-khong-logo')
-    expect(screen.getByRole('link', { name: 'NHẬN BÁO GIÁ' })).toHaveProperty('pathname', '/bao-gia')
+    expect(screen.queryByRole('link', { name: /NHẬN/ })).toBeNull()
   })
 
   it('has a GET search form with field q', () => {

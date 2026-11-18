@@ -1,9 +1,8 @@
 import { listProducts } from '@/lib/catalog/repository'
 import type { CartLine } from '@/lib/cart/types'
 
-/** Test fixtures shared by the order tests: A is a ready product, C is a custom (non-orderable) one. */
+/** Test fixtures shared by the order tests: A is a sample product. */
 export const A = listProducts({ categorySlug: 'ao-bong-da-khong-logo' }).items[0]
-export const C = listProducts({ categorySlug: 'ao-bong-da-thiet-ke' }).items[0]
 
 export const line = (quantity: number): CartLine => ({ productId: A.id, size: 'M', color: A.colors[0].name, quantity })
 

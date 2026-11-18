@@ -16,7 +16,7 @@ function toValidLine(raw: unknown): CartLine | null {
   if (!parsed.success) return null
   const { productId, size, color, quantity } = parsed.data
   const product = getProductById(productId)
-  if (product === null || product.kind !== 'ready') return null
+  if (product === null) return null
   const matchedSize = product.sizes.find((s) => s === size)
   if (matchedSize === undefined || !product.colors.some((c) => c.name === color)) return null
   return { productId, size: matchedSize, color, quantity }

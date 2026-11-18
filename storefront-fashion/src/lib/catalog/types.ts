@@ -1,4 +1,3 @@
-export type ProductKind = 'ready' | 'custom'
 export type Size = 'S' | 'M' | 'L' | 'XL' | 'XXL' | 'Free'
 export type SortKey = 'popular' | 'newest' | 'price-asc' | 'price-desc'
 
@@ -20,7 +19,6 @@ export interface Product {
   readonly sku: string
   readonly name: string
   readonly categorySlug: string
-  readonly kind: ProductKind
   readonly price: number
   readonly compareAtPrice: number | null
   readonly colors: readonly ProductColor[]

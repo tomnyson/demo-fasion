@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { A, C, line, valid } from './fixtures'
+import { A, line, valid } from './fixtures'
 import type { OrderRepository } from './repository'
 import type { Order } from './schema'
 import { placeOrder, toPublicOrder } from './service'
@@ -32,7 +32,6 @@ describe('placeOrder', () => {
       [{ ...line(1), quantity: 0 }],
       [{ ...line(1), quantity: 1000 }],
       [{ ...line(1), quantity: 1.5 }],
-      [{ ...line(1), productId: C.id }],
       [{ ...line(1), productId: 'GONE' }],
       [{ ...line(1), size: 'XXXL' }],
       [{ ...line(1), color: 'Không có màu này' }],

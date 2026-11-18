@@ -55,9 +55,8 @@ describe('catalogue listing', () => {
 describe('catalogue data integrity', () => {
   const all = listProducts({ pageSize: 64 }).items
 
-  it('has unique slugs and 36 ready products', () => {
+  it('has unique slugs', () => {
     expect(new Set(all.map((p) => p.slug)).size).toBe(64)
-    expect(all.filter((p) => p.kind === 'ready')).toHaveLength(36)
   })
 
   it('has valid prices, colours, sizes and categories', () => {

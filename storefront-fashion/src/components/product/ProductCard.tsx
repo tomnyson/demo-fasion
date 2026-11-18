@@ -28,7 +28,7 @@ export function ProductCard({ product }: { readonly product: Product }) {
           </ul>
           <h3 className="line-clamp-2 break-words text-base font-extrabold text-ink">{product.name}</h3>
           <div className="mt-auto">
-            <Price price={product.price} compareAtPrice={product.compareAtPrice} kind={product.kind} />
+            <Price price={product.price} compareAtPrice={product.compareAtPrice} />
           </div>
         </div>
       </Link>

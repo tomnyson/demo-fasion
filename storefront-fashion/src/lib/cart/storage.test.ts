@@ -4,7 +4,6 @@ import { loadCart, saveCart } from './storage'
 import type { CartLine } from './types'
 
 const A = listProducts({ categorySlug: 'ao-bong-da-khong-logo' }).items[0]
-const C = listProducts({ categorySlug: 'ao-cau-long' }).items[0]
 const line = (q: number): CartLine => ({ productId: A.id, size: 'M', color: A.colors[0].name, quantity: q })
 const store = (v: string | null) => ({ getItem: () => v })
 
@@ -17,12 +16,16 @@ describe('loadCart', () => {
     expect(loadCart(store('{"a":1}'))).toEqual([])
   })
 
-  it('drops unknown products, custom products, bad sizes and bad quantities', () => {
+  it('drops unknown products, bad sizes and bad quantities', () => {
     expect(loadCart(store(JSON.stringify([line(2), { productId: 'GONE', size: 'M', color: 'x', quantity: 1 }])))).toEqual([line(2)])
-    expect(loadCart(store(JSON.stringify([{ ...line(1), productId: C.id }])))).toEqual([])
     expect(loadCart(store(JSON.stringify([{ ...line(1), size: 'XXXL' }])))).toEqual([])
     expect(loadCart(store(JSON.stringify([{ ...line(1), color: 'khong-co' }])))).toEqual([])
     expect(loadCart(store(JSON.stringify([{ ...line(1), quantity: -4 }, { ...line(1), quantity: 'x' }])))).toEqual([])
+  })
+
+  it('keeps a line for any product that has the chosen size and colour', () => {
+    const anyProduct = listProducts({ pageSize: 100 }).items.at(-1)!
+    expect(loadCart(store(JSON.stringify([{ productId: anyProduct.id, size: anyProduct.sizes[0], color: anyProduct.colors[0].name, quantity: 1 }])))).toHaveLength(1)
   })
 
   it('merges duplicate keys and clamps', () => {
