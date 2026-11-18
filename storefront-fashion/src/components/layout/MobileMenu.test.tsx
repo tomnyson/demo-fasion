@@ -16,6 +16,13 @@ describe('MobileMenu', () => {
     expect(toggle.getAttribute('aria-expanded')).toBe('false')
   })
 
+  it('lists the four categories under Sản phẩm', async () => {
+    const user = userEvent.setup(); render(<MobileMenu items={MAIN_NAV} />)
+    await user.click(screen.getByRole('button', { name: 'Mở menu' }))
+    for (const [name, path] of [['Đầm', 'dam'], ['Váy', 'vay'], ['Áo', 'ao'], ['Quần', 'quan']])
+      expect(screen.getByRole('link', { name })).toHaveProperty('pathname', `/danh-muc/${path}`)
+  })
+
   it('renders no links while closed', () => {
     render(<MobileMenu items={MAIN_NAV} />)
     expect(screen.queryAllByRole('link')).toHaveLength(0)

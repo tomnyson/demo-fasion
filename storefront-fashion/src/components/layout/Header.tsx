@@ -2,37 +2,8 @@ import Link from 'next/link'
 import type { ReactNode } from 'react'
 import { MAIN_NAV } from '@/config/navigation'
 import { SITE } from '@/config/site'
+import { DesktopNav } from './DesktopNav'
 import { MobileMenu } from './MobileMenu'
-
-const ITEM = 'block whitespace-nowrap px-1.5 py-2 text-[13px] font-bold uppercase text-ink hover:text-brand-strong focus-visible:text-brand-strong'
-
-function DesktopNav() {
-  return (
-    <nav aria-label="Danh mục chính" className="hidden xl:block">
-      <ul className="flex items-center">
-        {MAIN_NAV.map((item) => (
-          <li key={item.href} className="group relative">
-            <Link href={item.href} className={ITEM}>
-              {item.label}
-              {item.children ? <span aria-hidden="true"> ▾</span> : null}
-            </Link>
-            {item.children ? (
-              <ul className="invisible absolute left-0 top-full z-50 min-w-48 rounded-product bg-white py-2 opacity-0 shadow-card transition group-focus-within:visible group-focus-within:opacity-100 group-hover:visible group-hover:opacity-100">
-                {item.children.map((child) => (
-                  <li key={child.href}>
-                    <Link href={child.href} className="block px-4 py-2 text-sm text-ink hover:bg-soft hover:text-brand-strong">
-                      {child.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            ) : null}
-          </li>
-        ))}
-      </ul>
-    </nav>
-  )
-}
 
 function SearchForm() {
   return (
@@ -62,7 +33,7 @@ export function Header({ cartSlot }: { readonly cartSlot?: ReactNode }) {
           <span className="whitespace-nowrap text-lg font-black min-[480px]:text-xl 2xl:text-2xl uppercase text-ink">{SITE.name}</span>
           <span className="hidden whitespace-nowrap text-[11px] text-muted 2xl:block">{SITE.tagline}</span>
         </Link>
-        <DesktopNav />
+        <DesktopNav items={MAIN_NAV} />
         <div className="flex items-center gap-1.5 min-[480px]:gap-3">
           <SearchForm />
           {cartSlot}

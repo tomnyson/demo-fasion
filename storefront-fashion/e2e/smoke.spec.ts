@@ -13,9 +13,11 @@ test('header stays visible while scrolling', async ({ page }) => {
   await expect(page.getByRole('banner')).toBeInViewport()
 })
 
-test('mobile shows the contact bar', async ({ page, isMobile }) => {
+test('mobile shows the quick-contact bar', async ({ page, isMobile }) => {
   test.skip(!isMobile); await page.goto('/')
-  await expect(page.getByRole('link', { name: 'Chat Zalo' })).toBeVisible()
+  const bar = page.getByRole('navigation', { name: 'Liên hệ nhanh' })
+  await expect(bar.getByRole('link', { name: 'Zalo' })).toBeVisible()
+  await expect(bar.getByRole('link')).toHaveCount(6)
 })
 
 test('removed pages answer 404', async ({ page }) => {

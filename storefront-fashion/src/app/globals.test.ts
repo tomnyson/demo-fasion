@@ -7,6 +7,7 @@ const css = readFileSync(join(__dirname, 'globals.css'), 'utf8')
 describe('globals.css theme', () => {
   it.each([
     ['brand', '#CFE89A'],
+    ['brand-hover', '#B9D97A'],
     ['brand-strong', '#3F6B1B'],
     ['brand-ink', '#2F4A12'],
     ['soft', '#F7FBEF'],

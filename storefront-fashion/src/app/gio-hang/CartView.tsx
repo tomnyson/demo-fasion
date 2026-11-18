@@ -19,7 +19,7 @@ export function CartView() {
     )
   }
   return (
-    <div className="grid items-start gap-6 min-[850px]:grid-cols-[1fr_340px]">
+    <div className="grid grid-cols-1 items-start gap-6 min-[850px]:grid-cols-[minmax(0,1fr)_340px]">
       <CartTable lines={totals.lines} onQuantity={setQuantity} onRemove={remove} />
       <CartSummary totals={totals} />
     </div>

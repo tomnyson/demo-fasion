@@ -14,7 +14,7 @@ export interface CartTableProps {
 
 export function CartTable({ lines, onQuantity, onRemove }: CartTableProps) {
   return (
-    <div className="overflow-x-auto rounded-card border border-line bg-white">
+    <div className="relative overflow-x-auto rounded-card border border-line bg-white">
       <table className="w-full min-w-[720px] text-left text-sm">
         <thead className="bg-soft text-xs font-bold uppercase text-muted">
           <tr>

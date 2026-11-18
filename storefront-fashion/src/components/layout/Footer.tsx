@@ -20,34 +20,58 @@ function LinkColumn({ title, items }: { readonly title: string; readonly items: 
   )
 }
 
+function ShopColumn() {
+  return (
+    <section>
+      <h2 className={HEADING}>THỜI TRANG NỮ LÁ STUDIO</h2>
+      <address className="mt-4 space-y-2 text-sm not-italic text-muted">
+        <p>{SITE.tagline}. Thiết kế nhẹ nhàng, dễ mặc cho mọi dáng người.</p>
+        <p>Hotline: <a href={SITE.hotlineTel} className="font-semibold text-ink hover:text-brand-strong">{SITE.hotlineDisplay}</a></p>
+        <p>{SITE.openingHours}</p>
+        <p>Email: <a href={`mailto:${SITE.email}`} className="hover:text-brand-strong">{SITE.email}</a></p>
+        <p>{SITE.address}</p>
+      </address>
+    </section>
+  )
+}
+
+const SOCIAL: readonly { readonly label: string; readonly href: string }[] = [
+  { label: 'Facebook', href: SITE.facebookUrl },
+  { label: 'Tiktok', href: SITE.tiktokUrl },
+  { label: 'Shopee', href: SITE.shopeeUrl },
+]
+
+function ConnectColumn() {
+  return (
+    <section>
+      <h2 className={HEADING}>KẾT NỐI</h2>
+      <ul className="mt-4 space-y-2">
+        {SOCIAL.filter((s) => s.href !== '').map((s) => (
+          <li key={s.label}><a href={s.href} target="_blank" rel="noopener noreferrer" className={LINK}>{s.label}</a></li>
+        ))}
+      </ul>
+      <h3 className={`${HEADING} mt-6`}>PHƯƠNG THỨC THANH TOÁN</h3>
+      <ul className="mt-3 flex gap-2 text-xs font-semibold text-ink">
+        <li className="rounded-product border border-line px-3 py-1">COD</li>
+        <li className="rounded-product border border-line px-3 py-1">Chuyển khoản</li>
+      </ul>
+    </section>
+  )
+}
+
 export function Footer() {
   return (
     <footer className="mt-auto">
       <div className="border-t border-line bg-white">
-        <div className="container-site grid gap-8 py-12 md:grid-cols-4">
-          <LinkColumn title="VỀ CHÚNG TÔI" items={FOOTER_ABOUT_LINKS} />
+        <div className="container-site grid gap-8 py-12 min-[850px]:grid-cols-4">
+          <ShopColumn />
+          <LinkColumn title="GIỚI THIỆU" items={FOOTER_ABOUT_LINKS} />
           <LinkColumn title="HỖ TRỢ KHÁCH HÀNG" items={FOOTER_SUPPORT_LINKS} />
-          <section>
-            <h2 className={HEADING}>KẾT NỐI VỚI CHÚNG TÔI</h2>
-            <ul className="mt-4 space-y-2">
-              <li><a href={SITE.facebookUrl} target="_blank" rel="noopener noreferrer" className={LINK}>Facebook</a></li>
-              <li><a href={SITE.zaloUrl} target="_blank" rel="noopener noreferrer" className={LINK}>Zalo</a></li>
-              <li><a href={SITE.messengerUrl} target="_blank" rel="noopener noreferrer" className={LINK}>Messenger</a></li>
-            </ul>
-          </section>
-          <section>
-            <h2 className={HEADING}>THÔNG TIN LIÊN HỆ</h2>
-            <address className="mt-4 space-y-2 text-sm not-italic text-muted">
-              <p className="font-semibold text-ink">{SITE.name}</p>
-              <p>{SITE.address}</p>
-              <p>Hotline: <a href={SITE.hotlineTel} className="font-semibold text-ink hover:text-brand-strong">{SITE.hotlineDisplay}</a></p>
-              <p>Email: <a href={`mailto:${SITE.email}`} className="hover:text-brand-strong">{SITE.email}</a></p>
-            </address>
-          </section>
+          <ConnectColumn />
         </div>
       </div>
       <div className="bg-brand text-xs text-brand-ink">
-        <p className="container-site py-4 text-center">© 2026 {SITE.name}. Mọi quyền được bảo lưu.</p>
+        <p className="container-site py-4 text-center">© {new Date().getFullYear()} {SITE.name}</p>
       </div>
     </footer>
   )
