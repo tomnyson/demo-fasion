@@ -8,3 +8,8 @@ export function discountPercent(price: number, compareAtPrice: number | null): n
   if (compareAtPrice === null || compareAtPrice <= price) return null
   return Math.round(((compareAtPrice - price) / compareAtPrice) * 100)
 }
+
+export function formatDate(isoDate: string): string {
+  const [year, month, day] = isoDate.split('-')
+  return `${day}/${month}/${year}`
+}

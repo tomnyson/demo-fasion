@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { discountPercent, formatVnd } from '@/lib/format'
+import { discountPercent, formatDate, formatVnd } from '@/lib/format'
 
 describe('formatVnd', () => {
   it('formats integers with dot separators and the dong sign', () => {
@@ -19,5 +19,11 @@ describe('discountPercent', () => {
     expect(discountPercent(139000, null)).toBeNull()
     expect(discountPercent(139000, 139000)).toBeNull() // no badge when not cheaper
     expect(discountPercent(150000, 139000)).toBeNull()
+  })
+})
+
+describe('formatDate', () => {
+  it('renders an ISO date as dd/mm/yyyy', () => {
+    expect(formatDate('2026-11-03')).toBe('03/11/2026')
   })
 })

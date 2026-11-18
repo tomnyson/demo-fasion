@@ -5,7 +5,7 @@ import { SITE } from '@/config/site'
 import { Button } from '@/components/ui/Button'
 import { MobileMenu } from './MobileMenu'
 
-const ITEM = 'block px-3 py-2 text-[13px] font-bold uppercase text-ink hover:text-brand focus-visible:text-brand'
+const ITEM = 'block whitespace-nowrap px-1.5 py-2 text-[13px] font-bold uppercase text-ink hover:text-brand focus-visible:text-brand'
 
 function DesktopNav() {
   return (
@@ -43,7 +43,7 @@ function SearchForm() {
         name="q"
         placeholder="Tìm kiếm sản phẩm"
         aria-label="Tìm kiếm sản phẩm"
-        className="w-44 bg-transparent px-4 py-2 text-sm outline-none"
+        className="w-20 text-ellipsis bg-transparent px-3 py-2 text-sm outline-none 2xl:w-44 2xl:px-4"
       />
       <button type="submit" aria-label="Tìm" className="grid h-9 w-9 place-items-center text-ink hover:text-brand">
         <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
@@ -58,16 +58,16 @@ function SearchForm() {
 export function Header({ cartSlot }: { readonly cartSlot?: ReactNode }) {
   return (
     <header className="sticky top-0 z-40 border-b border-line bg-white">
-      <div className="container-site flex h-[78px] items-center gap-4">
+      <div className="container-site flex h-[78px] items-center gap-2">
         <Link href="/" className="mr-auto flex flex-col leading-tight xl:mr-2" aria-label={SITE.name}>
-          <span className="text-2xl font-black uppercase text-navy">{SITE.name}</span>
-          <span className="hidden text-[11px] text-muted sm:block">{SITE.tagline}</span>
+          <span className="whitespace-nowrap text-lg font-black min-[480px]:text-xl 2xl:text-2xl uppercase text-navy">{SITE.name}</span>
+          <span className="hidden whitespace-nowrap text-[11px] text-muted 2xl:block">{SITE.tagline}</span>
         </Link>
         <DesktopNav />
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-1.5 min-[480px]:gap-3">
           <SearchForm />
           {cartSlot}
-          <Button variant="red" href="/bao-gia" className="hidden sm:inline-flex">NHẬN BÁO GIÁ</Button>
+          <Button variant="red" href="/bao-gia" className="px-3 text-xs min-[480px]:px-5 min-[480px]:text-sm">NHẬN BÁO GIÁ</Button>
           <MobileMenu items={MAIN_NAV} />
         </div>
       </div>

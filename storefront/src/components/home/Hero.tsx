@@ -11,7 +11,7 @@ export function Hero() {
       >
         <div>
           <p className="text-sm font-bold uppercase tracking-wide text-white/80">Đồng phục đội nhóm · Trường lớp · Doanh nghiệp</p>
-          <h1 className="mt-3 text-4xl font-black uppercase leading-tight min-[850px]:text-5xl">
+          <h1 className="mt-3 text-4xl font-black uppercase leading-tight min-[850px]:text-[40px]">
             <span className="block">ĐỒ THỂ THAO</span>
             <span className="block text-brand">THIẾT KẾ THEO YÊU CẦU</span>
             <span className="block">CHO ĐỘI NHÓM</span>

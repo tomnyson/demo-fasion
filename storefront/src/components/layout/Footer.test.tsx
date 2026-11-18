@@ -20,4 +20,9 @@ describe('Footer', () => {
     render(<Footer />)
     expect(screen.getByRole('link', { name: 'Chính sách bảo mật' }).getAttribute('href')).toBe('/chinh-sach#bao-mat')
   })
+
+  it('links to the contact page', () => {
+    render(<Footer />)
+    expect(screen.getByRole('link', { name: 'Liên hệ' }).getAttribute('href')).toBe('/lien-he')
+  })
 })

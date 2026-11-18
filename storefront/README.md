@@ -1,36 +1,61 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Vertex Sport Storefront
 
-## Getting Started
+Website bán đồ thể thao đội nhóm xây bằng Next.js 16 (App Router), React 19, Tailwind CSS 4 và TypeScript. Thương hiệu **Vertex Sport**, dữ liệu và ảnh chỉ là mẫu (ảnh placeholder từ picsum.photos).
 
-First, run the development server:
+Hỗ trợ hai mô hình bán trên cùng một catalogue:
+
+- **Hàng có sẵn (`ready`)**: chọn size, màu, số lượng, giỏ hàng, thanh toán, trang đặt hàng thành công.
+- **Hàng thiết kế theo yêu cầu (`custom`)**: không có giỏ hàng, khách gọi điện, nhắn Zalo hoặc gửi form nhận báo giá.
+
+## Chạy dự án
+
+Yêu cầu Node.js và pnpm.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
+pnpm dev             # chạy chế độ phát triển, http://localhost:3000
+pnpm build           # build production
+pnpm start           # chạy bản đã build
+pnpm lint            # ESLint
+pnpm test            # unit test (Vitest)
+pnpm test:coverage   # unit test kèm coverage, ngưỡng 80% cho src/lib và src/components
+pnpm e2e             # test end-to-end (Playwright), tự build và chạy server ở cổng 3100
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Lần đầu chạy e2e có thể cần `pnpm exec playwright install chromium`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Chỗ cần sửa khi đổi dữ liệu
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Việc cần làm | Tệp |
+|---|---|
+| Đổi thương hiệu: tên, hotline, email, địa chỉ, liên kết mạng xã hội | `src/config/site.ts` |
+| Đổi sản phẩm và danh mục | `src/lib/catalog/products.ts` (danh mục: `src/lib/catalog/categories.ts`) |
+| Đổi quy tắc bán hàng: phí giao hàng, ngưỡng miễn phí giao hàng, giới hạn số lượng | `src/config/commerce.ts` |
+| Đổi menu và liên kết chính sách | `src/config/navigation.ts` |
+| Đổi bài viết và nội dung chính sách | `src/lib/content/posts.ts`, `src/lib/content/policies.ts` |
+| Đổi màu, bo góc, bóng đổ (design token) | `src/app/globals.css` |
 
-## Learn More
+## Lưu trữ đơn hàng và báo giá
 
-To learn more about Next.js, take a look at the following resources:
+Chưa có database. Đơn hàng và yêu cầu báo giá được ghi thành tệp JSON Lines (mỗi dòng một bản ghi) trong thư mục `DATA_DIR` (mặc định `.data/`) thông qua interface repository trong `src/lib/orders` và `src/lib/quotes`. Muốn dùng database thật, viết một repository mới theo cùng interface rồi thay vào chỗ đang dùng, phần còn lại của ứng dụng không phải đổi.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+API: `POST /api/orders` và `POST /api/quotes`, phản hồi theo một envelope `{ success, data, error }`. Mỗi endpoint validate dữ liệu bằng schema zod, kiểm tra same-origin và giới hạn 5 request / 60 giây / IP.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Lưu ý khi triển khai
 
-## Deploy on Vercel
+- **Cần ổ đĩa bền vững.** Đơn hàng và báo giá là tệp JSON Lines dưới `DATA_DIR`, nên máy chủ cần một ổ đĩa lưu trữ lâu dài. Cách lưu này không phù hợp với hosting serverless (hệ thống tệp tạm thời, nhiều instance không chia sẻ dữ liệu). Hãy đổi repository sang database trước khi triển khai kiểu đó.
+- **Giới hạn tần suất phụ thuộc `x-forwarded-for`.** Bộ giới hạn lấy địa chỉ client từ header `x-forwarded-for` và chỉ lưu trong bộ nhớ của từng process. Vì vậy môi trường production phải đặt sau một reverse proxy đáng tin cậy và proxy này phải ghi đè header đó. Nếu không, client có thể tự đặt giá trị để né giới hạn. Chạy nhiều process thì mỗi process đếm riêng.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Ngoài phạm vi
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Các phần sau chưa làm, cần plan riêng nếu muốn bổ sung:
+
+- Admin
+- Đăng nhập và tài khoản
+- Wishlist
+- Tích điểm
+- Cổng thanh toán online
+- Database thật
+- Gửi email hoặc Zalo tự động
+- Đa ngôn ngữ
+- Bình luận blog

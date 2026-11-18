@@ -31,6 +31,18 @@ test('ready product: cart to order success', async ({ page }) => {
   await page.goto('/gio-hang'); await expect(page.getByText('Giỏ hàng của bạn đang trống.')).toBeVisible()
 })
 
+test('bank transfer order shows the transfer details and the order code', async ({ page }) => {
+  await addReadyProductAndCheckout(page)
+  await fillRecipient(page, '0901234567')
+  await page.getByRole('radio', { name: 'Chuyển khoản ngân hàng' }).check()
+  await page.getByRole('button', { name: 'ĐẶT HÀNG' }).click()
+  await expect(page).toHaveURL(/\/dat-hang-thanh-cong\/VS-\d{6}-[A-Z2-9]{8}/)
+  const code = page.url().split('/').pop() ?? ''
+  const transfer = page.getByRole('region', { name: 'Thông tin chuyển khoản' })
+  await expect(transfer.getByText('Ngân hàng Mẫu')).toBeVisible()
+  await expect(transfer.getByText(code)).toBeVisible()
+})
+
 test('invalid phone shows the field error and keeps the cart', async ({ page }) => {
   await addReadyProductAndCheckout(page)
   await fillRecipient(page, '123')

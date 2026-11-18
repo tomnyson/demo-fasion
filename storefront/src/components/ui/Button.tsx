@@ -18,7 +18,7 @@ const VARIANTS = {
 } as const
 
 const BASE =
-  'inline-flex h-11 items-center justify-center rounded-full px-6 py-3 text-sm font-semibold uppercase transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:cursor-not-allowed disabled:opacity-50'
+  'inline-flex h-11 items-center whitespace-nowrap justify-center rounded-full px-6 py-3 text-sm font-semibold uppercase transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:cursor-not-allowed disabled:opacity-50'
 
 const isWebUrl = (href: string) => /^https?:\/\//.test(href)
 

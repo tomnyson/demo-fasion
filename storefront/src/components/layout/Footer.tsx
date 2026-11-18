@@ -36,6 +36,9 @@ export function Footer() {
               <p>Hotline: <a href={SITE.hotlineTel} className="font-semibold text-ink hover:text-brand">{SITE.hotlineDisplay}</a></p>
               <p>Email: <a href={`mailto:${SITE.email}`} className="hover:text-brand">{SITE.email}</a></p>
             </address>
+            <p className="mt-3">
+              <Link href="/lien-he" className={LINK}>Liên hệ</Link>
+            </p>
           </section>
         </div>
       </div>
