@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test'
 
-test('add a ready product, edit and persist the cart', async ({ page }) => {
+test('add a product, edit and persist the cart', async ({ page }) => {
   await page.goto('/danh-muc/ao'); await page.locator('main article a').first().click()
   await page.getByRole('radio', { name: 'M', exact: true }).check()
   await page.getByRole('button', { name: 'THÊM VÀO GIỎ' }).click()

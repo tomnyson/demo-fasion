@@ -8,7 +8,7 @@ export const metadata: Metadata = { title: 'Liên hệ' }
 
 const LINK = 'font-semibold text-brand-strong underline underline-offset-2'
 const BUTTON =
-  'flex flex-col items-center justify-center gap-2 rounded-card bg-brand p-4 text-center text-sm font-bold text-brand-ink hover:bg-brand-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink'
+  'flex flex-col items-center justify-center gap-2 rounded-card bg-brand p-4 text-center text-sm font-bold text-brand-ink hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink'
 
 export default function ContactPage() {
   const channels = getQuickContacts().filter((contact) => contact.id !== 'home')

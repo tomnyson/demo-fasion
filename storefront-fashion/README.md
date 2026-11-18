@@ -28,6 +28,8 @@ Lần đầu chạy e2e có thể cần `pnpm exec playwright install chromium`.
 | Đổi thương hiệu: tên, hotline, email, địa chỉ, liên kết Zalo, Messenger, Facebook, Shopee, Tiktok (cột liên hệ nhanh lấy từ đây) | `src/config/site.ts` |
 | Đổi màu, bo góc, bóng đổ (design token) | `src/app/globals.css` |
 | Đổi sản phẩm và nhãn `featured`, `best-seller`, `new` | `src/lib/catalog/products.ts` (danh mục: `src/lib/catalog/categories.ts`) |
+| Đổi bảng size (ngực, eo, mông theo từng size) | `src/config/size-chart.ts` |
+| Đổi các kênh liên hệ nhanh: thứ tự, nhãn, liên kết (cột bên phải và thanh dưới trên điện thoại) | `src/config/contacts.ts` |
 | Đổi slide trang chủ | `src/config/slides.ts` |
 | Đổi quy tắc giao hàng: phí giao hàng, ngưỡng miễn phí | `src/config/commerce.ts` |
 | Đổi menu và liên kết chính sách | `src/config/navigation.ts` |

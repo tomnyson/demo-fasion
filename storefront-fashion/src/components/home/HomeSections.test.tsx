@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 import Home from '@/app/page'
+import { SITE } from '@/config/site'
 import { SLIDES } from '@/config/slides'
 
 describe('Home page', () => {
@@ -10,6 +11,14 @@ describe('Home page', () => {
     expect(document.querySelectorAll('#san-pham article')).toHaveLength(24)
     expect(document.querySelectorAll('article')).toHaveLength(24)
     expect(document.querySelector('main')).toBeNull()
+  })
+
+  it('has exactly one level-1 heading, visually hidden, with the site name and tagline', () => {
+    render(<Home />)
+    const headings = screen.getAllByRole('heading', { level: 1 })
+    expect(headings).toHaveLength(1)
+    expect(headings[0].textContent).toBe(`${SITE.name} – ${SITE.tagline}`)
+    expect(headings[0].className.split(/\s+/)).toContain('sr-only')
   })
 })
 

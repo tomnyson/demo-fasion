@@ -6,7 +6,6 @@ export type SortKey = 'popular' | 'newest' | 'price-asc' | 'price-desc'
 export interface Category {
   readonly slug: string
   readonly name: string
-  readonly image: string
 }
 
 export interface Collection {

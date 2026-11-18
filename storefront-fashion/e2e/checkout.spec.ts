@@ -7,7 +7,7 @@ async function useOwnClientAddress(page: Page) {
   await page.context().setExtraHTTPHeaders({ 'x-forwarded-for': `10.${octet()}.${octet()}.${octet()}` })
 }
 
-async function addReadyProductAndCheckout(page: Page) {
+async function addProductAndCheckout(page: Page) {
   await page.goto('/danh-muc/ao'); await page.locator('main article a').first().click()
   await page.getByRole('radio', { name: 'M', exact: true }).check(); await page.getByRole('button', { name: 'MUA NGAY' }).click()
   await expect(page).toHaveURL(/\/thanh-toan/)
@@ -20,8 +20,8 @@ async function fillRecipient(page: Page, phone: string) {
 
 test.beforeEach(async ({ page }) => useOwnClientAddress(page))
 
-test('ready product: cart to order success', async ({ page }) => {
-  await addReadyProductAndCheckout(page)
+test('cart to order success', async ({ page }) => {
+  await addProductAndCheckout(page)
   await fillRecipient(page, '0901234567')
   await page.getByRole('button', { name: 'ĐẶT HÀNG' }).click()
   await expect(page).toHaveURL(/\/dat-hang-thanh-cong\/LS-\d{6}-[A-Z2-9]{8}/)
@@ -31,8 +31,20 @@ test('ready product: cart to order success', async ({ page }) => {
   await page.goto('/gio-hang'); await expect(page.getByText('Giỏ hàng của bạn đang trống.')).toBeVisible()
 })
 
+test('order success content starts at the header left edge on desktop', async ({ page, isMobile }) => {
+  test.skip(isMobile)
+  await page.setViewportSize({ width: 1280, height: 800 })
+  await addProductAndCheckout(page)
+  await fillRecipient(page, '0901234567')
+  await page.getByRole('button', { name: 'ĐẶT HÀNG' }).click()
+  await expect(page).toHaveURL(/\/dat-hang-thanh-cong\//)
+  const h1 = (await page.getByRole('heading', { level: 1 }).boundingBox())!
+  const logo = (await page.getByRole('banner').getByRole('link', { name: 'Lá Studio' }).first().boundingBox())!
+  expect(Math.abs(h1.x - logo.x)).toBeLessThanOrEqual(2)
+})
+
 test('bank transfer order shows the transfer details and the order code', async ({ page }) => {
-  await addReadyProductAndCheckout(page)
+  await addProductAndCheckout(page)
   await fillRecipient(page, '0901234567')
   await page.getByRole('radio', { name: 'Chuyển khoản ngân hàng' }).check()
   await page.getByRole('button', { name: 'ĐẶT HÀNG' }).click()
@@ -44,7 +56,7 @@ test('bank transfer order shows the transfer details and the order code', async 
 })
 
 test('invalid phone shows the field error and keeps the cart', async ({ page }) => {
-  await addReadyProductAndCheckout(page)
+  await addProductAndCheckout(page)
   await fillRecipient(page, '123')
   await page.getByRole('button', { name: 'ĐẶT HÀNG' }).click()
   await expect(page.getByText('Số điện thoại không hợp lệ.')).toBeVisible()

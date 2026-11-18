@@ -25,17 +25,20 @@ for (const width of [390, 320])
     await page.locator('main article a').first().click()
     await page.getByRole('radio', { name: 'M', exact: true }).check()
     const bar = page.getByRole('navigation', { name: 'Liên hệ nhanh' })
-    const overlaps = async (name: string) => {
-      const btn = page.getByRole('button', { name })
+    const overlapsElement = async (btn: import('@playwright/test').Locator) => {
       await btn.scrollIntoViewIfNeeded()
       const [a, b] = [await btn.boundingBox(), await bar.boundingBox()]
       return a!.y + a!.height > b!.y && a!.y < b!.y + b!.height
     }
+    const overlaps = (name: string) => overlapsElement(page.getByRole('button', { name }))
     expect(await overlaps('THÊM VÀO GIỎ')).toBe(false)
     await page.getByRole('button', { name: 'MUA NGAY' }).click()
     await page.waitForURL(/thanh-toan/)
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
     expect(await overlaps('ĐẶT HÀNG')).toBe(false)
+    await page.goto('/gio-hang')
+    await expect(page.getByTestId('cart-total')).toBeVisible()
+    expect(await overlapsElement(page.getByTestId('cart-total'))).toBe(false)
     for (const url of ['/', '/san-pham', '/gio-hang', '/thanh-toan']) {
       await page.goto(url)
       if (url === '/gio-hang') await expect(page.getByRole('table')).toBeVisible()

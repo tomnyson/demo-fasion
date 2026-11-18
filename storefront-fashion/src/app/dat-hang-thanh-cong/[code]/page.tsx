@@ -59,19 +59,21 @@ export default async function OrderSuccessPage({ params }: OrderSuccessProps) {
   const order = toPublicOrder(stored)
 
   return (
-    <div className="container-site flex max-w-3xl flex-col gap-6 py-10">
-      <div>
-        <h1 className="text-[28px] font-black uppercase text-ink">Đặt hàng thành công</h1>
-        <p className="mt-2 text-ink">
-          Mã đơn hàng của bạn: <strong data-testid="order-code">{order.code}</strong>
-        </p>
-        <p className="text-sm text-muted">Chúng tôi sẽ liên hệ để xác nhận đơn hàng trong thời gian sớm nhất.</p>
+    <div className="container-site py-10">
+      <div className="flex max-w-3xl flex-col gap-6">
+        <div>
+          <h1 className="text-[28px] font-black uppercase text-ink">Đặt hàng thành công</h1>
+          <p className="mt-2 text-ink">
+            Mã đơn hàng của bạn: <strong data-testid="order-code">{order.code}</strong>
+          </p>
+          <p className="text-sm text-muted">Chúng tôi sẽ liên hệ để xác nhận đơn hàng trong thời gian sớm nhất.</p>
+        </div>
+        <OrderLines order={order} />
+        {order.payment === 'bank' ? <BankTransfer code={order.code} /> : null}
+        <Button variant="soft" href="/danh-muc/ao" className="self-start">
+          TIẾP TỤC MUA SẮM
+        </Button>
       </div>
-      <OrderLines order={order} />
-      {order.payment === 'bank' ? <BankTransfer code={order.code} /> : null}
-      <Button variant="soft" href="/danh-muc/ao" className="self-start">
-        TIẾP TỤC MUA SẮM
-      </Button>
     </div>
   )
 }

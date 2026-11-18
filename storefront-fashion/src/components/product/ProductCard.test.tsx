@@ -4,29 +4,29 @@ import { getProduct, listProducts } from '@/lib/catalog/repository'
 import { ProductCard } from './ProductCard'
 import { ProductGrid } from './ProductGrid'
 
-const ready = getProduct(listProducts({ categorySlug: 'ao' }).items[0].slug)!
+const sample = getProduct(listProducts({ categorySlug: 'ao' }).items[0].slug)!
 
 describe('ProductCard', () => {
   it('links to the product page with image and discount badge', () => {
-    render(<ProductCard product={ready} />)
-    expect(screen.getByRole('link')).toHaveProperty('pathname', `/san-pham/${ready.slug}`)
-    expect(screen.getByRole('img', { name: ready.name })).toBeTruthy()
+    render(<ProductCard product={sample} />)
+    expect(screen.getByRole('link')).toHaveProperty('pathname', `/san-pham/${sample.slug}`)
+    expect(screen.getByRole('img', { name: sample.name })).toBeTruthy()
     expect(screen.getByText('-21%').className).toContain('bg-price')
   })
 
   it('hides the badge when there is no discount', () => {
-    render(<ProductCard product={{ ...ready, compareAtPrice: null }} />)
+    render(<ProductCard product={{ ...sample, compareAtPrice: null }} />)
     expect(screen.queryByText(/-\d+%/)).toBeNull()
   })
 
   it('clamps a very long name to two lines', () => {
-    render(<ProductCard product={{ ...ready, name: 'Áo '.repeat(80) }} />)
+    render(<ProductCard product={{ ...sample, name: 'Áo '.repeat(80) }} />)
     expect(screen.getByRole('heading').className).toContain('line-clamp-2')
   })
 
   it('uses a portrait image box and no colour thumbnails', () => {
-    render(<ProductCard product={ready} />)
-    expect(screen.getByRole('img', { name: ready.name }).parentElement?.className).toContain('aspect-[3/4]')
+    render(<ProductCard product={sample} />)
+    expect(screen.getByRole('img', { name: sample.name }).parentElement?.className).toContain('aspect-[3/4]')
     expect(document.querySelectorAll('[data-testid="color-thumb"]').length).toBe(0)
   })
 })

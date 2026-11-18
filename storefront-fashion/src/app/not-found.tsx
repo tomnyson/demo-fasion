@@ -10,7 +10,7 @@ export default function NotFound() {
         <Button variant="soft" href="/">
           Về trang chủ
         </Button>
-        <Button variant="primary" href="/#san-pham">
+        <Button variant="primary" href="/san-pham">
           Xem sản phẩm
         </Button>
       </div>
