@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { ContactPanel } from '@/components/product/ContactPanel'
 import { Gallery } from '@/components/product/Gallery'
+import { PurchasePanel } from '@/components/product/PurchasePanel'
 import { SizeChartDialog } from '@/components/product/SizeChartDialog'
 import { Price } from '@/components/ui/Price'
 import type { Product } from '@/lib/catalog/types'
@@ -30,7 +31,7 @@ export function ProductView({ product }: { readonly product: Product }) {
         <div>
           <SizeChartDialog />
         </div>
-        {product.kind === 'custom' ? <ContactPanel product={product} /> : <div data-testid="purchase-slot" />}
+        {product.kind === 'custom' ? <ContactPanel product={product} /> : <PurchasePanel product={product} activeColorIndex={activeIndex} onColorChange={setActiveIndex} />}
         <section aria-labelledby="perks-title" className="rounded-card border border-line bg-soft p-5">
           <h2 id="perks-title" className="text-base font-black uppercase text-brand">
             ƯU ĐÃI KHI MUA HÀNG

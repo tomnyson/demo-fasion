@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import "./globals.css";
+import { CartIcon } from "@/components/cart/CartIcon";
+import { CartProvider } from "@/components/cart/CartProvider";
 import { CtaBand } from "@/components/layout/CtaBand";
 import { FloatingContacts } from "@/components/layout/FloatingContacts";
 import { Footer } from "@/components/layout/Footer";
@@ -25,13 +27,15 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="vi" className={`${roboto.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col pb-12 min-[850px]:pb-0">
-        <TopBar />
-        <Header />
-        <main className="flex-1">{children}</main>
-        <CtaBand />
-        <Footer />
-        <FloatingContacts />
-        <MobileContactBar />
+        <CartProvider>
+          <TopBar />
+          <Header cartSlot={<CartIcon />} />
+          <main className="flex-1">{children}</main>
+          <CtaBand />
+          <Footer />
+          <FloatingContacts />
+          <MobileContactBar />
+        </CartProvider>
       </body>
     </html>
   );
