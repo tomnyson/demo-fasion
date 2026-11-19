@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { postJson } from './client'
+import { postJson, sendJson } from './client'
 
 afterEach(() => vi.unstubAllGlobals())
 
@@ -23,5 +23,18 @@ describe('postJson', () => {
     expect(await postJson('/api/x', {})).toMatchObject({ success: false, error: { code: 'INTERNAL' } })
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response('{"foo":1}')))
     expect(await postJson('/api/x', {})).toMatchObject({ success: false, error: { code: 'INTERNAL' } })
+  })
+})
+
+describe('sendJson', () => {
+  it('sends other methods and omits an undefined body', async () => {
+    const envelope = { success: true, data: null, error: null }
+    const fetchMock = vi.fn().mockImplementation(async () => new Response(JSON.stringify(envelope)))
+    vi.stubGlobal('fetch', fetchMock)
+    expect(await sendJson('DELETE', '/api/x/1')).toEqual(envelope)
+    expect(fetchMock.mock.calls[0][1]).not.toHaveProperty('body')
+    expect(fetchMock.mock.calls[0][1]).toMatchObject({ method: 'DELETE' })
+    await sendJson('PATCH', '/api/x/1', { a: 2 })
+    expect(fetchMock.mock.calls[1][1]).toMatchObject({ method: 'PATCH', body: '{"a":2}' })
   })
 })
