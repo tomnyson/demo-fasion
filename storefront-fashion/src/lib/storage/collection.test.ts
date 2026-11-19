@@ -1,6 +1,6 @@
-import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
+import { mkdir, mkdtemp, readFile, rm, stat, unlink, utimes, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
-import { join } from 'node:path'
+import { dirname, join } from 'node:path'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { createCollection, withFileLock } from './collection'
 
@@ -122,5 +122,73 @@ describe('withFileLock', () => {
     }
     await Promise.all(Array.from({ length: 10 }, () => withFileLock(file, bump)))
     expect(counter).toBe(10)
+  })
+})
+
+describe('cross-process file lock', () => {
+  const lockFile = () => `${file}.lock`
+  const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+  const exists = (path: string) =>
+    stat(path).then(
+      () => true,
+      () => false,
+    )
+  const holdLock = async () => {
+    await mkdir(dirname(file), { recursive: true })
+    await writeFile(lockFile(), 'other-process')
+  }
+
+  it('waits while another process holds <file>.lock, then proceeds once it is released', async () => {
+    await holdLock()
+    const items = createCollection<Item>(file)
+    let done = false
+    const pending = items.mutate(() => ({ writes: [{ id: 'a', n: 1 }], result: 'ok' })).then((value) => {
+      done = true
+      return value
+    })
+    await sleep(120)
+    expect(done).toBe(false)
+    await unlink(lockFile())
+    expect(await pending).toBe('ok')
+    expect(await items.get('a')).toEqual({ id: 'a', n: 1 })
+    expect(await exists(lockFile())).toBe(false)
+  })
+
+  it('serialises mutations from two collection instances on one file', async () => {
+    const first = createCollection<Item>(file)
+    const second = createCollection<Item>(file)
+    const bump = (items: typeof first) =>
+      items.mutate((all) => ({ writes: [{ id: 'c', n: (all.find((item) => item.id === 'c')?.n ?? 0) + 1 }], result: undefined }))
+    await Promise.all(Array.from({ length: 10 }, (_, i) => bump(i % 2 === 0 ? first : second)))
+    expect((await first.get('c'))?.n).toBe(10)
+  })
+
+  it('removes a lock older than the stale threshold and proceeds', async () => {
+    await holdLock()
+    const old = new Date(Date.now() - 31_000)
+    await utimes(lockFile(), old, old)
+    const started = Date.now()
+    await withFileLock(file, async () => undefined)
+    expect(Date.now() - started).toBeLessThan(1000)
+    expect(await exists(lockFile())).toBe(false)
+  })
+
+  it('gives up with a clear error when the lock is never released', async () => {
+    await holdLock()
+    await expect(withFileLock(file, async () => 'never', { timeoutMs: 100, retryMs: 10 })).rejects.toThrow(/Timed out .* lock .*items\.jsonl\.lock/)
+    expect(await exists(lockFile())).toBe(true)
+  })
+
+  it('releases the lock when the task throws', async () => {
+    const items = createCollection<Item>(file)
+    await expect(
+      items.mutate(() => {
+        throw new Error('boom')
+      }),
+    ).rejects.toThrow('boom')
+    expect(await exists(lockFile())).toBe(false)
+    const started = Date.now()
+    await items.put({ id: 'a', n: 1 })
+    expect(Date.now() - started).toBeLessThan(1000)
   })
 })

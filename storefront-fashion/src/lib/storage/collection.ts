@@ -1,7 +1,7 @@
 import { appendFile, mkdir } from 'node:fs/promises'
 import { dirname } from 'node:path'
 import { readRecords } from './jsonl-store'
-import { withLock } from './lock'
+import { type ProcessLockOptions, withLock, withProcessLock } from './lock'
 
 /** Marks a record as deleted; later lines with the same id win over it. */
 export interface Tombstone {
@@ -26,9 +26,13 @@ export interface Collection<T extends { readonly id: string }> {
   mutate<R>(decide: (items: readonly T[]) => Mutation<T, R>): Promise<R>
 }
 
-/** Serialises tasks per data file inside this process. Not re-entrant: never nest calls for the same file. */
-export function withFileLock<T>(filePath: string, fn: () => Promise<T>): Promise<T> {
-  return withLock(filePath, fn)
+/**
+ * Serialises tasks per data file: first in-process (queue per path), then across processes via
+ * `<file>.lock` next to the data file, so the app and CLI scripts never interleave writes.
+ * Not re-entrant: never nest calls for the same file.
+ */
+export function withFileLock<T>(filePath: string, fn: () => Promise<T>, options?: ProcessLockOptions): Promise<T> {
+  return withLock(filePath, () => withProcessLock(`${filePath}.lock`, fn, options))
 }
 
 const hasStringId = (value: unknown): value is { readonly id: string } =>
@@ -59,7 +63,7 @@ async function appendLines(filePath: string, records: readonly unknown[]): Promi
   await appendFile(filePath, records.map((record) => `${JSON.stringify(record)}\n`).join(''), 'utf8')
 }
 
-/** Append-only JSONL collection keyed by `id`, with in-process locking per file. */
+/** Append-only JSONL collection keyed by `id`; writes hold the in-process and cross-process file lock. */
 export function createCollection<T extends { readonly id: string }>(filePath: string, { normalize = keep }: CollectionOptions = {}): Collection<T> {
   const all = async (): Promise<readonly T[]> => merge<T>((await readRecords<unknown>(filePath)).map((raw) => (isTombstoneLine(raw) ? raw : normalize(raw))))
   const write = (records: readonly CollectionWrite<T>[]) => withFileLock(filePath, () => appendLines(filePath, records))
