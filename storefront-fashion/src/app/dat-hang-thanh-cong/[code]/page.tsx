@@ -1,10 +1,10 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { Button } from '@/components/ui/Button'
-import { formatVnd } from '@/lib/format'
+import { OrderLines } from '@/components/orders/OrderLines'
+import { getCurrentUser } from '@/lib/auth/current-user'
 import { ORDER_CODE_PATTERN } from '@/lib/orders/code'
 import { createFileOrderRepository } from '@/lib/orders/repository'
-import type { PublicOrder } from '@/lib/orders/schema'
 import { toPublicOrder } from '@/lib/orders/service'
 
 export const dynamic = 'force-dynamic'
@@ -25,34 +25,6 @@ function BankTransfer({ code }: { readonly code: string }) {
   )
 }
 
-function OrderLines({ order }: { readonly order: PublicOrder }) {
-  return (
-    <div className="rounded-card border border-line bg-white p-5 shadow-card">
-      <ul className="space-y-2 text-sm text-ink">
-        {order.lines.map((item) => (
-          <li key={`${item.productId}|${item.size}|${item.color}`} className="flex justify-between gap-3">
-            <span>
-              {item.name} ({item.size}, {item.color}) × {item.quantity}
-            </span>
-            <span className="shrink-0">{formatVnd(item.lineTotal)}</span>
-          </li>
-        ))}
-      </ul>
-      <dl className="mt-3 space-y-2 border-t border-line pt-3 text-sm text-ink">
-        <div className="flex justify-between"><dt>Tạm tính</dt><dd>{formatVnd(order.subtotal)}</dd></div>
-        {order.discount ? (
-          <div className="flex justify-between text-brand-strong">
-            <dt>Giảm giá{order.couponCode ? ` (${order.couponCode})` : ''}</dt>
-            <dd>−{formatVnd(order.discount)}</dd>
-          </div>
-        ) : null}
-        <div className="flex justify-between"><dt>Phí giao hàng</dt><dd>{order.shipping === 0 ? 'Miễn phí' : formatVnd(order.shipping)}</dd></div>
-        <div className="flex justify-between text-base font-black text-ink"><dt>Tổng cộng</dt><dd className="text-price">{formatVnd(order.total)}</dd></div>
-      </dl>
-    </div>
-  )
-}
-
 interface OrderSuccessProps {
   readonly params: Promise<{ code: string }>
 }
@@ -63,6 +35,9 @@ export default async function OrderSuccessPage({ params }: OrderSuccessProps) {
   const stored = await createFileOrderRepository().findByCode(code)
   if (stored === null) notFound()
   const order = toPublicOrder(stored)
+  // Public by code (A9); only the owner gets the link into their account.
+  const viewer = stored.userId === undefined ? null : await getCurrentUser()
+  const ownsOrder = viewer !== null && viewer.id === stored.userId
 
   return (
     <div className="container-site py-10">
@@ -76,9 +51,16 @@ export default async function OrderSuccessPage({ params }: OrderSuccessProps) {
         </div>
         <OrderLines order={order} />
         {order.payment === 'bank' ? <BankTransfer code={order.code} /> : null}
-        <Button variant="soft" href="/danh-muc/ao" className="self-start">
-          TIẾP TỤC MUA SẮM
-        </Button>
+        <div className="flex flex-wrap gap-3">
+          {ownsOrder ? (
+            <Button variant="outline" href={`/tai-khoan/don-hang/${order.code}`}>
+              Xem đơn hàng của bạn
+            </Button>
+          ) : null}
+          <Button variant="soft" href="/danh-muc/ao">
+            TIẾP TỤC MUA SẮM
+          </Button>
+        </div>
       </div>
     </div>
   )

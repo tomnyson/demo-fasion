@@ -27,3 +27,11 @@ describe('formatDate', () => {
     expect(formatDate('2026-11-03')).toBe('03/11/2026')
   })
 })
+
+describe('shop-time formatting', () => {
+  it('shows timestamps in Vietnam time', async () => {
+    const { formatDateTime, formatDay } = await import('./format')
+    expect(formatDateTime('2026-11-18T03:05:00Z')).toBe('10:05 18/11/2026')
+    expect(formatDay('2026-11-18T20:00:00Z')).toBe('19/11/2026')
+  })
+})

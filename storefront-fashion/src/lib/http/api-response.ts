@@ -1,5 +1,5 @@
 export interface ApiError {
-  readonly code: 'VALIDATION' | 'UNAUTHORIZED' | 'FORBIDDEN' | 'RATE_LIMITED' | 'NOT_FOUND' | 'INTERNAL'
+  readonly code: 'VALIDATION' | 'UNAUTHORIZED' | 'FORBIDDEN' | 'RATE_LIMITED' | 'NOT_FOUND' | 'CONFLICT' | 'INTERNAL'
   readonly message: string
   readonly fields?: Readonly<Record<string, string>>
 }
