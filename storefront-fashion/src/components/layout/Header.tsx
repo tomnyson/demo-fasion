@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import type { ReactNode } from 'react'
+import { AccountLink } from '@/components/account/AccountLink'
 import { MAIN_NAV } from '@/config/navigation'
 import { SITE } from '@/config/site'
 import { DesktopNav } from './DesktopNav'
@@ -36,6 +37,7 @@ export function Header({ cartSlot }: { readonly cartSlot?: ReactNode }) {
         <DesktopNav items={MAIN_NAV} />
         <div className="flex items-center gap-1.5 min-[480px]:gap-3">
           <SearchForm />
+          <AccountLink />
           {cartSlot}
           <MobileMenu items={MAIN_NAV} />
         </div>

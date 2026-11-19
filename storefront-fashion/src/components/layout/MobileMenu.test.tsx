@@ -23,6 +23,18 @@ describe('MobileMenu', () => {
       expect(screen.getByRole('link', { name })).toHaveProperty('pathname', `/danh-muc/${path}`)
   })
 
+  it('offers Đăng nhập inside the open panel and closes on click', async () => {
+    const user = userEvent.setup(); render(<MobileMenu items={MAIN_NAV} />)
+    await user.click(screen.getByRole('button', { name: 'Mở menu' }))
+    const link = screen.getByRole('link', { name: 'Đăng nhập' })
+    expect(link.getAttribute('href')).toBe('/dang-nhap')
+    const stopNavigation = (event: Event) => event.preventDefault()
+    document.addEventListener('click', stopNavigation)
+    await user.click(link)
+    document.removeEventListener('click', stopNavigation)
+    expect(screen.queryAllByRole('link')).toHaveLength(0)
+  })
+
   it('renders no links while closed', () => {
     render(<MobileMenu items={MAIN_NAV} />)
     expect(screen.queryAllByRole('link')).toHaveLength(0)

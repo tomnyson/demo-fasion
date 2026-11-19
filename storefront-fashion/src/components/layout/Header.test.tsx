@@ -1,12 +1,24 @@
 import { render, screen } from '@testing-library/react'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { resetSessionCache } from '@/components/account/useSessionUser'
 import { Header } from './Header'
 
 const pathname = vi.hoisted(() => ({ value: '/tin-tuc' }))
 vi.mock('next/navigation', () => ({ usePathname: () => pathname.value }))
 
 describe('Header', () => {
-  beforeEach(() => { pathname.value = '/tin-tuc' })
+  beforeEach(() => { pathname.value = '/tin-tuc'; resetSessionCache() })
+  afterEach(() => vi.unstubAllGlobals())
+
+  it('shows Đăng nhập when signed out and Tài khoản when signed in', async () => {
+    render(<Header />)
+    expect(screen.getByRole('link', { name: 'Đăng nhập' }).getAttribute('href')).toBe('/dang-nhap')
+    resetSessionCache()
+    const body = { success: true, data: { user: { name: 'Lan' } }, error: null }
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(JSON.stringify(body))))
+    render(<Header />)
+    expect((await screen.findByRole('link', { name: 'Tài khoản' })).getAttribute('href')).toBe('/tai-khoan')
+  })
 
   it('links every main navigation entry and marks the current page', () => {
     render(<Header />)

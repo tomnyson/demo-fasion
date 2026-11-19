@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { MobileAccountLink } from '@/components/account/AccountLink'
 import type { NavItem } from '@/config/navigation'
 import { MobileNavList } from './MobileNavList'
 import { MobileSearchForm } from './MobileSearchForm'
@@ -43,6 +44,7 @@ export function MobileMenu({ items }: { readonly items: readonly NavItem[] }) {
             </button>
             <MobileSearchForm />
             <MobileNavList items={items} onNavigate={close} />
+            <MobileAccountLink onNavigate={close} />
           </nav>
         </div>
       ) : null}
