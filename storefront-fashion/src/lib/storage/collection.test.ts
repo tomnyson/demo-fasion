@@ -1,4 +1,4 @@
-import { mkdir, mkdtemp, readFile, rm, stat, unlink, utimes, writeFile } from 'node:fs/promises'
+import { mkdir, mkdtemp, readdir, readFile, rm, stat, unlink, utimes, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
@@ -99,6 +99,30 @@ describe('createCollection', () => {
     const before = await readFile(file, 'utf8')
     expect(await items.mutate(() => ({ writes: [], result: 7 }))).toBe(7)
     expect(await readFile(file, 'utf8')).toBe(before)
+  })
+
+  it('does not glue a new record onto a torn last line', async () => {
+    const raw = join(dir, 'torn.jsonl')
+    await writeFile(raw, '{"id":"a","n":1}\n{"id":"b","n"')
+    const items = createCollection<Item>(raw)
+    await items.put({ id: 'c', n: 3 })
+    expect(await items.all()).toEqual([
+      { id: 'a', n: 1 },
+      { id: 'c', n: 3 },
+    ])
+  })
+
+  it('compacts to the kept live records once the file exceeds a line count', async () => {
+    const items = createCollection<Item>(file)
+    await items.put({ id: 'a', n: 1 })
+    await items.put({ id: 'a', n: 2 })
+    await items.put({ id: 'b', n: 1 })
+    await items.remove('b')
+    await items.put({ id: 'old', n: 0 })
+    expect(await items.compact({ maxLines: 10, keep: () => true })).toBe(false)
+    expect(await items.compact({ maxLines: 4, keep: (item) => item.n > 0 })).toBe(true)
+    expect(await readFile(file, 'utf8')).toBe('{"id":"a","n":2}\n')
+    expect(await readdir(dirname(file))).toEqual(['items.jsonl'])
   })
 
   it('does not write when the decision throws', async () => {

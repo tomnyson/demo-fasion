@@ -1,4 +1,4 @@
-import { mkdtemp, rm, writeFile } from 'node:fs/promises'
+import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -22,6 +22,21 @@ describe('jsonl-store', () => {
     await appendRecord(join(dir, 'deep/a.jsonl'), { n: 1 })
     await appendRecord(join(dir, 'deep/a.jsonl'), { n: 2 })
     expect(await readRecords(join(dir, 'deep/a.jsonl'))).toEqual([{ n: 1 }, { n: 2 }])
+  })
+
+  it('starts a new line when the file ends in a torn (unterminated) line', async () => {
+    const file = join(dir, 'torn.jsonl')
+    await writeFile(file, '{"n":1}\n{"n":2,"tru')
+    await appendRecord(file, { n: 3 })
+    expect(await readFile(file, 'utf8')).toBe('{"n":1}\n{"n":2,"tru\n{"n":3}\n')
+    expect(await readRecords(file)).toEqual([{ n: 1 }, { n: 3 }])
+  })
+
+  it('adds no blank line to an empty file', async () => {
+    const file = join(dir, 'empty.jsonl')
+    await writeFile(file, '')
+    await appendRecord(file, { n: 1 })
+    expect(await readFile(file, 'utf8')).toBe('{"n":1}\n')
   })
 
   it('skips blank and unparsable lines', async () => {

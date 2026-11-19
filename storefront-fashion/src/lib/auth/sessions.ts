@@ -30,13 +30,25 @@ const MAX_TOKEN_LENGTH = 64
 
 export const hashToken = (token: string): string => createHash('sha256').update(token).digest('hex')
 
-export function createSessionStore(filePath: string = dataPath(SESSIONS_FILE)): SessionStore {
+/** Past this many lines, creating a session rewrites the file with only the live sessions. */
+export const COMPACT_AFTER_LINES = 500
+
+export interface SessionStoreOptions {
+  readonly compactAfterLines?: number
+}
+
+export function createSessionStore(filePath: string = dataPath(SESSIONS_FILE), { compactAfterLines = COMPACT_AFTER_LINES }: SessionStoreOptions = {}): SessionStore {
   const sessions = createCollection<SessionRecord>(filePath)
   return {
     async create(userId, now) {
       const token = randomBytes(TOKEN_BYTES).toString('base64url')
       const expiresAt = new Date(now.getTime() + SESSION_TTL_MS)
       await sessions.put({ id: hashToken(token), userId, createdAt: now.toISOString(), expiresAt: expiresAt.toISOString() })
+      // Drops expired sessions, destroyed ones (tombstones) and superseded lines so the file stays bounded.
+      // The session is already stored, so a failed compaction is logged rather than failing sign-in.
+      await sessions
+        .compact({ maxLines: compactAfterLines, keep: (session) => Date.parse(session.expiresAt) > now.getTime() })
+        .catch((error: unknown) => console.error('[sessions] compaction failed', { error }))
       return { token, expiresAt }
     },
     async resolve(token, now) {

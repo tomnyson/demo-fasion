@@ -1,4 +1,4 @@
-import { mkdtemp, readFile, rm } from 'node:fs/promises'
+import { appendFile, mkdtemp, readdir, readFile, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
@@ -50,6 +50,24 @@ describe('createSessionStore', () => {
     await sessions.destroy(a.token)
     expect(await sessions.resolve(a.token, now)).toBeNull()
     expect(await sessions.resolve(b.token, now)).toBe('u1')
+  })
+
+  it('compacts the file to live, unexpired sessions once it grows past the line limit', async () => {
+    const small = createSessionStore(file, { compactAfterLines: 5 })
+    const expired = await small.create('u1', later(-SESSION_TTL_MS - 1))
+    const destroyed = await small.create('u1', now)
+    await small.destroy(destroyed.token)
+    const live = await small.create('u2', now)
+    await appendFile(file, 'garbage\n')
+    expect((await readFile(file, 'utf8')).trim().split('\n')).toHaveLength(5)
+    const fresh = await small.create('u3', now)
+    const lines = (await readFile(file, 'utf8')).trim().split('\n')
+    expect(lines.map((line) => JSON.parse(line).id)).toEqual([hashToken(live.token), hashToken(fresh.token)])
+    expect(await small.resolve(live.token, now)).toBe('u2')
+    expect(await small.resolve(fresh.token, now)).toBe('u3')
+    expect(await small.resolve(expired.token, now)).toBeNull()
+    expect(await small.resolve(destroyed.token, now)).toBeNull()
+    expect(await readdir(dir)).toEqual(['sessions.jsonl'])
   })
 
   it('destroyAllFor ends every session of one user only', async () => {
