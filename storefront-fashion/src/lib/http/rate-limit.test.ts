@@ -26,9 +26,19 @@ describe('createRateLimiter', () => {
 })
 
 describe('clientKey', () => {
-  it('uses the first x-forwarded-for entry, else unknown', () => {
-    expect(clientKey(new Request('http://x', { headers: { 'x-forwarded-for': '1.2.3.4, 5.6.7.8' } }))).toBe('1.2.3.4')
-    expect(clientKey(new Request('http://x'))).toBe('unknown')
-    expect(clientKey(new Request('http://x', { headers: { 'x-forwarded-for': ' ' } }))).toBe('unknown')
+  const key = (headers: Record<string, string>) => clientKey(new Request('http://x', { headers }))
+
+  it('uses the rightmost x-forwarded-for entry, which the nearest proxy appended', () => {
+    expect(key({ 'x-forwarded-for': '1.2.3.4, 5.6.7.8' })).toBe('5.6.7.8')
+    expect(key({ 'x-forwarded-for': 'spoofed, 9.9.9.9 ' })).toBe('9.9.9.9')
+    expect(key({ 'x-forwarded-for': '10.0.0.1' })).toBe('10.0.0.1')
+  })
+
+  it('falls back to x-real-ip, then unknown', () => {
+    expect(key({ 'x-real-ip': ' 4.4.4.4 ' })).toBe('4.4.4.4')
+    expect(key({ 'x-forwarded-for': ' ', 'x-real-ip': '4.4.4.4' })).toBe('4.4.4.4')
+    expect(key({ 'x-forwarded-for': '1.1.1.1, ' })).toBe('unknown')
+    expect(key({})).toBe('unknown')
+    expect(key({ 'x-forwarded-for': ' ', 'x-real-ip': ' ' })).toBe('unknown')
   })
 })

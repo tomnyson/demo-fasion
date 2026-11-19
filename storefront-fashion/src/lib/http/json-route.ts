@@ -27,7 +27,8 @@ async function readJsonBody(request: Request, allowEmpty: boolean): Promise<Pars
   }
 }
 
-function rateLimited(retryAfterSec: number): Response {
+/** The shared 429 envelope with a `Retry-After` header. */
+export function rateLimited(retryAfterSec: number): Response {
   return fail(
     429,
     { code: 'RATE_LIMITED', message: 'Bạn thao tác quá nhanh. Vui lòng thử lại sau ít phút.' },

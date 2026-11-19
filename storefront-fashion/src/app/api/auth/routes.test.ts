@@ -103,8 +103,17 @@ describe('auth routes', () => {
 
   it('rate limits login to 10 per minute per client', async () => {
     const same = { 'x-forwarded-for': '77.7.7.7' }
-    for (let i = 0; i < 10; i++) await login(post('/api/auth/login', { email: 'a@b.vn', password: 'x' }, same))
-    expect((await login(post('/api/auth/login', { email: 'a@b.vn', password: 'x' }, same))).status).toBe(429)
+    for (let i = 0; i < 10; i++) await login(post('/api/auth/login', { email: `ip${i}@b.vn`, password: 'x' }, same))
+    expect((await login(post('/api/auth/login', { email: 'ip-last@b.vn', password: 'x' }, same))).status).toBe(429)
+  })
+
+  it('rate limits login to 10 per 15 minutes per email, whatever the client address', async () => {
+    for (let i = 0; i < 10; i++) expect((await login(post('/api/auth/login', { email: 'target@b.vn', password: 'x' }))).status).toBe(401)
+    const blocked = await login(post('/api/auth/login', { email: ' TARGET@b.vn ', password: 'x' }))
+    expect(blocked.status).toBe(429)
+    expect(Number(blocked.headers.get('retry-after'))).toBeGreaterThan(60)
+    expect((await blocked.json()).error.code).toBe('RATE_LIMITED')
+    expect((await login(post('/api/auth/login', { email: 'other@b.vn', password: 'x' }))).status).toBe(401)
   })
 
   it('me reports null when signed out and hides storage errors', async () => {

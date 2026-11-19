@@ -40,7 +40,18 @@ export function createRateLimiter({ limit, windowMs, now = Date.now }: RateLimit
   }
 }
 
+const nonEmpty = (value: string | undefined): string | null => {
+  const trimmed = value?.trim()
+  return trimmed === undefined || trimmed === '' ? null : trimmed
+}
+
+/**
+ * Rate-limit key for the caller's address. Uses the RIGHTMOST `X-Forwarded-For` entry (the one the
+ * nearest proxy appended; earlier entries are client-controlled), then `X-Real-IP`, then 'unknown'.
+ * The key is only trustworthy behind a reverse proxy that appends to / overwrites these headers;
+ * without one, a client can send any value, so auth routes also limit per account (see login).
+ */
 export function clientKey(request: Request): string {
-  const first = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
-  return first === undefined || first === '' ? 'unknown' : first
+  const rightmost = request.headers.get('x-forwarded-for')?.split(',').at(-1)
+  return nonEmpty(rightmost) ?? nonEmpty(request.headers.get('x-real-ip') ?? undefined) ?? 'unknown'
 }
