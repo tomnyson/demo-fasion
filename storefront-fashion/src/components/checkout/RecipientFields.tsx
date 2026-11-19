@@ -25,7 +25,13 @@ function PaymentFieldset() {
   )
 }
 
-export function RecipientFields({ errors }: { readonly errors: FieldErrors }) {
+interface RecipientFieldsProps {
+  readonly errors: FieldErrors
+  /** False when a saved address supplies name, phone, province and address; email, note and payment stay. */
+  readonly shipping?: boolean
+}
+
+function ShippingFields({ errors }: { readonly errors: FieldErrors }) {
   return (
     <>
       <Field name="name" label="Họ và tên" error={errors['customer.name']}>
@@ -34,9 +40,13 @@ export function RecipientFields({ errors }: { readonly errors: FieldErrors }) {
       <Field name="phone" label="Số điện thoại" error={errors['customer.phone']}>
         {(props) => <input type="tel" autoComplete="tel" {...props} />}
       </Field>
-      <Field name="email" label="Email (không bắt buộc)" error={errors['customer.email']}>
-        {(props) => <input type="email" autoComplete="email" {...props} />}
-      </Field>
+    </>
+  )
+}
+
+function PlaceFields({ errors }: { readonly errors: FieldErrors }) {
+  return (
+    <>
       <Field name="province" label="Tỉnh/Thành phố" error={errors['customer.province']}>
         {(props) => (
           <select defaultValue="" {...props}>
@@ -52,6 +62,18 @@ export function RecipientFields({ errors }: { readonly errors: FieldErrors }) {
       <Field name="address" label="Địa chỉ" error={errors['customer.address']}>
         {(props) => <input type="text" autoComplete="street-address" {...props} />}
       </Field>
+    </>
+  )
+}
+
+export function RecipientFields({ errors, shipping = true }: RecipientFieldsProps) {
+  return (
+    <>
+      {shipping ? <ShippingFields errors={errors} /> : null}
+      <Field name="email" label="Email (không bắt buộc)" error={errors['customer.email']}>
+        {(props) => <input type="email" autoComplete="email" {...props} />}
+      </Field>
+      {shipping ? <PlaceFields errors={errors} /> : null}
       <Field name="note" label="Ghi chú" error={errors['customer.note']}>
         {(props) => <textarea rows={3} {...props} />}
       </Field>

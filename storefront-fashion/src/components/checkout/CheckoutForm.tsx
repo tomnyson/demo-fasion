@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/Button'
 import type { CouponPreview } from '@/lib/coupons/preview'
 import { formatVnd } from '@/lib/format'
 import { CouponField } from './CouponField'
-import { RecipientFields } from './RecipientFields'
+import { CheckoutRecipient, type CheckoutAccount } from './CheckoutRecipient'
 import { useCheckoutSubmit } from './useCheckoutSubmit'
 
 interface OrderSummaryProps {
@@ -68,7 +68,12 @@ function EmptyCart() {
   )
 }
 
-export function CheckoutForm() {
+interface CheckoutFormProps {
+  /** Signed-in customer's data; omit for guest checkout. */
+  readonly account?: CheckoutAccount
+}
+
+export function CheckoutForm({ account }: CheckoutFormProps = {}) {
   const { lines, hydrated } = useCart()
   const [coupon, setCoupon] = useState<CouponPreview | null>(null)
   const [couponError, setCouponError] = useState<string | undefined>(undefined)
@@ -91,7 +96,7 @@ export function CheckoutForm() {
   return (
     <div className="grid items-start gap-6 min-[850px]:grid-cols-[1fr_380px]">
       <form noValidate onSubmit={handleSubmit} className="flex flex-col gap-4 rounded-card border border-line bg-white p-5 shadow-card">
-        <RecipientFields errors={errors} />
+        <CheckoutRecipient account={account} errors={errors} />
         <input type="hidden" name="couponCode" value={coupon?.code ?? ''} />
         {formError === null ? null : (
           <p role="alert" className="text-sm font-semibold text-price">

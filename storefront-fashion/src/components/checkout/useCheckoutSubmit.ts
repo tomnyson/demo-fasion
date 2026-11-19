@@ -13,14 +13,18 @@ function textOf(data: FormData, name: string): string {
   return typeof value === 'string' ? value : ''
 }
 
+/** Saved address: only email and note travel; the server copies the recipient from the book. */
 function buildPayload(form: HTMLFormElement, lines: readonly unknown[]) {
   const data = new FormData(form)
+  const common = { payment: textOf(data, 'payment'), lines, couponCode: textOf(data, 'couponCode') }
+  const addressId = textOf(data, 'addressId')
+  if (addressId !== '') return { addressId, customer: { email: textOf(data, 'email'), note: textOf(data, 'note') }, ...common }
   const customer = Object.fromEntries(CUSTOMER_FIELDS.map((name) => [name, textOf(data, name)]))
-  return { customer, payment: textOf(data, 'payment'), lines, couponCode: textOf(data, 'couponCode') }
+  return { customer, ...common, ...(data.get('saveAddress') === 'on' ? { saveAddress: true } : {}) }
 }
 
 function formErrorFor(fields: Readonly<Record<string, string>>, message: string): string | null {
-  const hasFieldError = Object.keys(fields).some((key) => key.startsWith('customer.') || key === 'couponCode')
+  const hasFieldError = Object.keys(fields).some((key) => key.startsWith('customer.') || key === 'couponCode' || key === 'addressId')
   return fields.lines ?? (hasFieldError ? null : message || GENERIC_ERROR)
 }
 
