@@ -51,11 +51,44 @@ Các điểm dưới đây do người xây tự quyết khi chưa có câu tr�
 | G8 | Màu giá và nhãn giảm giá là `#C62828` thay vì `#E5484D` đề xuất ban đầu, vì màu đỏ nhạt hơn không đạt tương phản 4,5:1 trên nền trắng. | Đổi token `price` trong `src/app/globals.css`, nhớ kiểm tra lại tương phản. |
 | G9 | Toàn bộ nội dung chính sách, bài viết và trang giới thiệu là văn bản mẫu. | Khách phải thay hoặc duyệt trước khi mở bán. |
 
+## Tài khoản khách hàng
+
+- **Đăng ký / đăng nhập:** `/dang-ky` và `/dang-nhap` (nhận `?next=` để quay lại trang trước đó, chỉ chấp nhận đường dẫn nội bộ). Biểu tượng người ở header dẫn tới đăng nhập hoặc tài khoản; trên màn hình rất hẹp dùng menu.
+- **Hồ sơ:** `/tai-khoan` sửa họ tên, số điện thoại và đổi mật khẩu (đổi xong các thiết bị khác bị đăng xuất). Có nút Đăng xuất.
+- **Sổ địa chỉ:** `/tai-khoan/dia-chi` thêm, sửa, xoá, đặt địa chỉ mặc định. Ở trang thanh toán, khách đã đăng nhập chọn địa chỉ đã lưu (mặc định được chọn sẵn) hoặc nhập địa chỉ mới và tick "Lưu vào sổ địa chỉ".
+- **Lịch sử đơn:** `/tai-khoan/don-hang` và `/tai-khoan/don-hang/[mã đơn]` xem trạng thái, sản phẩm, địa chỉ. Đơn của người khác trả về 404.
+- **Huỷ đơn:** khách chỉ huỷ được khi đơn đang "Chờ xác nhận" (`pending`). Huỷ xong, lượt dùng mã giảm giá được trả lại.
+
+### Đổi trạng thái đơn (nhân viên)
+
+```bash
+pnpm order:status <MÃ_ĐƠN> <trạng_thái>
+# ví dụ: pnpm order:status LS-261119-ABCD2345 confirmed
+```
+
+Trạng thái: `pending` (Chờ xác nhận) → `confirmed` → `shipping` → `delivered`, hoặc `cancelled` (Đã huỷ). Lệnh chạy trên máy có ổ đĩa dữ liệu (`DATA_DIR`) và từ chối chuyển trạng thái không hợp lệ.
+
+### Giả định về tài khoản và mã giảm giá
+
+| # | Giả định |
+|---|---|
+| A1 | Mã giảm giá là danh sách cố định trong `src/config/coupons.ts`, không có trang admin. |
+| A2 | Ba loại mã: `percent` (có `maxDiscount`), `fixed`, `freeship`; tuỳ chọn `minSubtotal`, thời hạn, `usageLimit`, `perUserLimit`, `requiresAccount`. |
+| A3 | Mỗi đơn dùng tối đa 1 mã; giảm trên tạm tính, tổng không âm; `freeship` đưa phí ship về 0. |
+| A4 | Lượt dùng mã chỉ đếm đơn không bị huỷ. |
+| A5 | Trạng thái đơn như trên; khách chỉ huỷ khi `pending`; nhân viên đổi bằng `pnpm order:status`. |
+| A6 | Sổ địa chỉ tối đa 10 địa chỉ mỗi tài khoản, có 1 địa chỉ mặc định. |
+| A7 | Phiên đăng nhập 30 ngày, cookie `ls_session` (`httpOnly`, `SameSite=Lax`, `Secure` ở production). |
+| A8 | Đơn của khách vãng lai không gắn với tài khoản tạo sau, kể cả khi trùng email. |
+| A9 | Trang `/dat-hang-thanh-cong/[code]` vẫn công khai theo mã đơn. |
+
+**Giới hạn lưu trữ:** người dùng, phiên, địa chỉ và đơn hàng đều là tệp JSON Lines, khoá ghi chỉ có tác dụng trong một process Node. Chỉ chạy một process trên một ổ đĩa bền vững; serverless hoặc nhiều instance sẽ mất hoặc ghi đè dữ liệu. Muốn chạy thật thì chuyển sang database qua interface repository.
+
 ## Mã giảm giá
 
 - Danh sách mã nằm trong `src/config/coupons.ts`. Muốn thêm, sửa hoặc ngừng mã thì sửa file này.
 - Mỗi mã thuộc một trong ba loại: `percent` (giảm theo %, có thể đặt mức giảm tối đa), `fixed` (giảm số tiền cố định) hoặc `freeship` (miễn phí giao hàng).
-- Điều kiện tuỳ chọn: đơn tối thiểu, ngày bắt đầu, ngày kết thúc, tổng số lượt dùng, chỉ dành cho thành viên.
+- Điều kiện tuỳ chọn: đơn tối thiểu, ngày bắt đầu, ngày kết thúc, tổng số lượt dùng, chỉ dành cho thành viên, giới hạn lượt dùng mỗi tài khoản.
 - Mã mẫu:
 
   | Mã | Ưu đãi |
@@ -63,7 +96,7 @@ Các điểm dưới đây do người xây tự quyết khi chưa có câu tr�
   | `LASTUDIO10` | Giảm 10%, tối đa 50.000đ, cho đơn từ 300.000đ |
   | `GIAM50K` | Giảm 50.000đ cho đơn từ 500.000đ, tối đa 100 lượt |
   | `FREESHIP` | Miễn phí giao hàng |
-  | `THANHVIEN15` | Mã ẩn, cần đăng nhập. Hiện luôn bị từ chối vì chưa có tài khoản. |
+  | `THANHVIEN15` | Mã ẩn, chỉ dành cho thành viên đã đăng nhập, mỗi tài khoản dùng 1 lần (đơn đã huỷ không tính). Khách vãng lai thấy thông báo yêu cầu đăng nhập. |
 
 - Mã có `public: true` được hiện thành gợi ý ở trang thanh toán.
 - Server tự tính lại giảm giá khi đặt đơn; số tiền client gửi lên bị bỏ qua. Lượt dùng được đếm từ `orders.jsonl`.
@@ -87,7 +120,7 @@ API: `POST /api/orders`, phản hồi theo envelope `{ success, data, error }`. 
 Các phần sau chưa làm, cần plan riêng nếu muốn bổ sung:
 
 - Admin
-- Đăng nhập và tài khoản
+- Quên mật khẩu, xác thực email, đăng nhập mạng xã hội
 - Cổng thanh toán online
 - Database thật
 - Gửi email hoặc Zalo tự động
