@@ -1,7 +1,6 @@
 import type { ComponentProps } from 'react'
 import { FormField } from '@/components/ui/FormField'
-
-const PROVINCES = ['TP. Hồ Chí Minh', 'Hà Nội', 'Đà Nẵng', 'Hải Phòng', 'Cần Thơ', 'Tỉnh/thành khác'] as const
+import { PROVINCES } from '@/config/provinces'
 
 const PAYMENT_OPTIONS = [
   { value: 'cod', label: 'Thanh toán khi nhận hàng (COD)' },
