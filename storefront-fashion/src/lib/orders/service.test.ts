@@ -5,12 +5,14 @@ import type { Order } from './schema'
 import { placeOrder, toPublicOrder } from './service'
 
 let saved: Order[]
+let used: number
 let deps: { repo: OrderRepository; now: () => Date }
 
 beforeEach(() => {
   saved = []
+  used = 0
   deps = {
-    repo: { create: async (order) => void saved.push(order), findByCode: async () => null },
+    repo: { create: async (order) => void saved.push(order), findByCode: async () => null, countByCoupon: async () => used },
     now: () => new Date('2026-11-18T03:00:00Z'),
   }
 })
@@ -57,5 +59,41 @@ describe('placeOrder', () => {
     await placeOrder(valid, deps)
     expect(saved).toHaveLength(1)
     expect('customer' in toPublicOrder(saved[0])).toBe(false)
+  })
+})
+
+describe('placeOrder with a coupon', () => {
+  const totals = (r: Awaited<ReturnType<typeof placeOrder>>) =>
+    r.ok ? [r.order.subtotal, r.order.discount, r.order.shipping, r.order.total, r.order.couponCode] : r.fields
+
+  it('applies a percent code and stores the normalised code with the discount', async () => {
+    const r = await placeOrder({ ...valid, couponCode: ' lastudio10 ' }, deps)
+    expect(totals(r)).toEqual([458000, 45800, 30000, 442200, 'LASTUDIO10'])
+  })
+
+  it('removes the shipping fee for FREESHIP', async () => {
+    expect(totals(await placeOrder({ ...valid, couponCode: 'FREESHIP' }, deps))).toEqual([458000, 0, 0, 458000, 'FREESHIP'])
+  })
+
+  it('stores no coupon fields when no code is sent', async () => {
+    const r = await placeOrder({ ...valid, couponCode: '  ' }, deps)
+    expect(r.ok && [r.order.couponCode, r.order.discount]).toEqual([undefined, 0])
+  })
+
+  it('rejects unusable codes under the couponCode field and stores nothing', async () => {
+    const cases: [unknown, string][] = [
+      [{ ...valid, couponCode: 'NOPE' }, 'Mã giảm giá không tồn tại.'],
+      [{ ...valid, couponCode: 'THANHVIEN15' }, 'Vui lòng đăng nhập để dùng mã này.'],
+      [{ ...valid, couponCode: 'GIAM50K' }, 'Đơn hàng chưa đạt giá trị tối thiểu 500.000 ₫.'],
+      [{ ...valid, couponCode: 'X'.repeat(33) }, 'Mã giảm giá không hợp lệ.'],
+    ]
+    for (const [input, message] of cases) {
+      const r = await placeOrder(input, deps)
+      expect(!r.ok && r.fields.couponCode).toBe(message)
+    }
+    used = 100
+    const usedUp = await placeOrder({ ...valid, lines: [line(3)], couponCode: 'GIAM50K' }, deps)
+    expect(!usedUp.ok && usedUp.fields.couponCode).toBe('Mã giảm giá đã hết lượt sử dụng.')
+    expect(saved).toHaveLength(0)
   })
 })

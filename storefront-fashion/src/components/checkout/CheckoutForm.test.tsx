@@ -73,6 +73,7 @@ describe('CheckoutForm', () => {
       customer: { name: 'Nguyễn Văn A', phone: '0901234567', email: '', province: 'Hà Nội', address: '12 Đường Mẫu', note: '' },
       payment: 'bank',
       lines: [line(2)],
+      couponCode: '',
     })
   })
 
@@ -107,5 +108,60 @@ describe('CheckoutForm', () => {
     await waitFor(() => expect(replace).toHaveBeenCalledWith('/dat-hang-thanh-cong/LS-261118-AAAAAAAA'))
     await waitFor(() => expect(localStorage.getItem('la-studio-cart-v1')).toBe('[]'))
     expect(screen.queryByText('Giỏ hàng của bạn đang trống.')).toBeNull()
+  })
+
+  describe('coupon', () => {
+    const preview = { code: 'LASTUDIO10', label: 'Giảm 10%', discount: 45800, shipping: 30000, total: 442200 }
+
+    it('previews a typed code, shows the discount and sends the code with the order', async () => {
+      post.mockResolvedValueOnce({ success: true, data: preview, error: null })
+      renderForm()
+      await userEvent.type(await screen.findByLabelText('Mã giảm giá'), 'lastudio10{Enter}')
+      expect(post).toHaveBeenCalledWith('/api/coupons/preview', { code: 'lastudio10', lines: [line(2)] })
+      expect((await screen.findByTestId('checkout-discount')).textContent).toBe('−45.800 ₫')
+      expect(screen.getByTestId('checkout-total').textContent).toBe('442.200 ₫')
+      expect(screen.getByRole('status').textContent).toContain('LASTUDIO10')
+
+      post.mockResolvedValueOnce(failure('VALIDATION', 'x', {}))
+      await userEvent.click(screen.getByRole('button', { name: 'ĐẶT HÀNG' }))
+      expect(post).toHaveBeenLastCalledWith('/api/orders', expect.objectContaining({ couponCode: 'LASTUDIO10' }))
+    })
+
+    it('applies a suggested code and lets the customer remove it', async () => {
+      post.mockResolvedValueOnce({ success: true, data: { ...preview, code: 'FREESHIP', discount: 0, shipping: 0, total: 458000 }, error: null })
+      renderForm()
+      await userEvent.click(await screen.findByRole('button', { name: 'FREESHIP' }))
+      expect(post).toHaveBeenCalledWith('/api/coupons/preview', { code: 'FREESHIP', lines: [line(2)] })
+      expect(await screen.findByText('Miễn phí')).toBeTruthy()
+      expect(screen.queryByTestId('checkout-discount')).toBeNull()
+      await userEvent.click(screen.getByRole('button', { name: 'Bỏ mã' }))
+      expect(screen.getByTestId('checkout-total').textContent).toBe('488.000 ₫')
+    })
+
+    it('shows why a code was refused', async () => {
+      post.mockResolvedValueOnce(failure('VALIDATION', 'x', { couponCode: 'Mã giảm giá không tồn tại.' }))
+      renderForm()
+      await userEvent.type(await screen.findByLabelText('Mã giảm giá'), 'NOPE')
+      await userEvent.click(screen.getByRole('button', { name: 'ÁP DỤNG' }))
+      expect(await screen.findByRole('alert')).toHaveProperty('textContent', 'Mã giảm giá không tồn tại.')
+      expect(screen.getByLabelText('Mã giảm giá').getAttribute('aria-invalid')).toBe('true')
+    })
+
+    it('drops the code when the order API refuses it, and a new code can still be applied', async () => {
+      post.mockResolvedValueOnce({ success: true, data: preview, error: null })
+      renderForm()
+      await userEvent.click(await screen.findByRole('button', { name: 'LASTUDIO10' }))
+      await screen.findByTestId('checkout-discount')
+      post.mockResolvedValueOnce(failure('VALIDATION', 'x', { couponCode: 'Mã giảm giá đã hết lượt sử dụng.' }))
+      await userEvent.click(screen.getByRole('button', { name: 'ĐẶT HÀNG' }))
+      expect(await screen.findByText('Mã giảm giá đã hết lượt sử dụng.')).toBeTruthy()
+      expect(screen.queryByTestId('checkout-discount')).toBeNull()
+      expect(screen.getByTestId('checkout-total').textContent).toBe('488.000 ₫')
+
+      post.mockResolvedValueOnce({ success: true, data: preview, error: null })
+      await userEvent.click(screen.getByRole('button', { name: 'LASTUDIO10' }))
+      expect(await screen.findByTestId('checkout-discount')).toBeTruthy()
+      expect(screen.queryByText('Mã giảm giá đã hết lượt sử dụng.')).toBeNull()
+    })
   })
 })

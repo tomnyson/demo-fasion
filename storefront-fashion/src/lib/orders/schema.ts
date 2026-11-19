@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { MAX_LINE_QTY } from '@/config/commerce'
+import { MAX_COUPON_CODE_LENGTH } from '@/config/coupons'
 import type { CartLine } from '@/lib/cart/types'
 import { boundedText, CONTACT_MESSAGES, emptyToUndefined, nameField, phoneField } from '@/lib/validation/contact'
 
@@ -7,6 +8,7 @@ export interface OrderInput {
   customer: { name: string; phone: string; email?: string; province: string; address: string; note?: string }
   payment: 'cod' | 'bank'
   lines: CartLine[]
+  couponCode?: string
 }
 
 export interface Order {
@@ -24,6 +26,9 @@ export interface Order {
     lineTotal: number
   }[]
   readonly subtotal: number
+  /** Product discount from the coupon; absent on orders placed before coupons existed. */
+  readonly discount?: number
+  readonly couponCode?: string
   readonly shipping: number
   readonly total: number
 }
@@ -38,6 +43,7 @@ export const MESSAGES = {
   address: 'Vui lòng nhập địa chỉ (5–200 ký tự).',
   note: 'Ghi chú tối đa 500 ký tự.',
   lines: 'Giỏ hàng không hợp lệ.',
+  couponCode: 'Mã giảm giá không hợp lệ.',
 } as const
 
 const MAX_ORDER_LINES = 50
@@ -56,7 +62,14 @@ const note = z
   .transform(emptyToUndefined)
   .optional()
 
-const lineSchema = z.object(
+export const couponCodeSchema = z
+  .string({ error: MESSAGES.couponCode })
+  .trim()
+  .max(MAX_COUPON_CODE_LENGTH, { error: MESSAGES.couponCode })
+  .transform((value) => emptyToUndefined(value.toUpperCase()))
+  .optional()
+
+export const lineSchema = z.object(
   {
     productId: z.string({ error: MESSAGES.lines }).max(64, { error: MESSAGES.lines }),
     size: z.enum(['S', 'M', 'L', 'XL', 'XXL'], { error: MESSAGES.lines }),
@@ -65,6 +78,11 @@ const lineSchema = z.object(
   },
   { error: MESSAGES.lines },
 )
+
+export const linesSchema = z
+  .array(lineSchema, { error: MESSAGES.lines })
+  .min(1, { error: MESSAGES.lines })
+  .max(MAX_ORDER_LINES, { error: MESSAGES.lines })
 
 export const orderInputSchema = z.object(
   {
@@ -80,7 +98,8 @@ export const orderInputSchema = z.object(
       { error: MESSAGES.lines },
     ),
     payment: z.enum(['cod', 'bank'], { error: MESSAGES.lines }),
-    lines: z.array(lineSchema, { error: MESSAGES.lines }).min(1, { error: MESSAGES.lines }).max(MAX_ORDER_LINES, { error: MESSAGES.lines }),
+    lines: linesSchema,
+    couponCode: couponCodeSchema,
   },
   { error: MESSAGES.lines },
 ) as unknown as z.ZodType<OrderInput>

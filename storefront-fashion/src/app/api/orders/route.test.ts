@@ -31,6 +31,14 @@ const post = (body: unknown, headers?: Record<string, string>) => send(JSON.stri
 const rawPost = (text: string) => send(text)
 
 describe('POST /api/orders', () => {
+  it('applies a coupon on the server and reports an unusable one under couponCode', async () => {
+    const res = await POST(post({ ...valid, couponCode: 'FREESHIP' }))
+    expect(res.status).toBe(201)
+    const bad = await POST(post({ ...valid, couponCode: 'KHONGCO' }))
+    expect(bad.status).toBe(400)
+    expect((await bad.json()).error.fields).toEqual({ couponCode: 'Mã giảm giá không tồn tại.' })
+  })
+
   it('creates an order and returns its code', async () => {
     const res = await POST(post(valid))
     expect(res.status).toBe(201)

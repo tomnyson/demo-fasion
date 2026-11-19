@@ -16,15 +16,20 @@ function textOf(data: FormData, name: string): string {
 function buildPayload(form: HTMLFormElement, lines: readonly unknown[]) {
   const data = new FormData(form)
   const customer = Object.fromEntries(CUSTOMER_FIELDS.map((name) => [name, textOf(data, name)]))
-  return { customer, payment: textOf(data, 'payment'), lines }
+  return { customer, payment: textOf(data, 'payment'), lines, couponCode: textOf(data, 'couponCode') }
 }
 
 function formErrorFor(fields: Readonly<Record<string, string>>, message: string): string | null {
-  const hasFieldError = Object.keys(fields).some((key) => key.startsWith('customer.'))
+  const hasFieldError = Object.keys(fields).some((key) => key.startsWith('customer.') || key === 'couponCode')
   return fields.lines ?? (hasFieldError ? null : message || GENERIC_ERROR)
 }
 
-export function useCheckoutSubmit() {
+interface CheckoutSubmitOptions {
+  /** Called with the message when the order API refuses the coupon code. */
+  readonly onCouponRejected?: (message: string) => void
+}
+
+export function useCheckoutSubmit({ onCouponRejected }: CheckoutSubmitOptions = {}) {
   const router = useRouter()
   const { lines, clear } = useCart()
   const [pending, setPending] = useState(false)
@@ -48,6 +53,7 @@ export function useCheckoutSubmit() {
       return
     }
     const fields = response.error.fields ?? {}
+    if (fields.couponCode !== undefined) onCouponRejected?.(fields.couponCode)
     setErrors(fields)
     setFormError(formErrorFor(fields, response.error.message))
     setPending(false)

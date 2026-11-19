@@ -51,6 +51,25 @@ Các điểm dưới đây do người xây tự quyết khi chưa có câu tr�
 | G8 | Màu giá và nhãn giảm giá là `#C62828` thay vì `#E5484D` đề xuất ban đầu, vì màu đỏ nhạt hơn không đạt tương phản 4,5:1 trên nền trắng. | Đổi token `price` trong `src/app/globals.css`, nhớ kiểm tra lại tương phản. |
 | G9 | Toàn bộ nội dung chính sách, bài viết và trang giới thiệu là văn bản mẫu. | Khách phải thay hoặc duyệt trước khi mở bán. |
 
+## Mã giảm giá
+
+- Danh sách mã nằm trong `src/config/coupons.ts`. Muốn thêm, sửa hoặc ngừng mã thì sửa file này.
+- Mỗi mã thuộc một trong ba loại: `percent` (giảm theo %, có thể đặt mức giảm tối đa), `fixed` (giảm số tiền cố định) hoặc `freeship` (miễn phí giao hàng).
+- Điều kiện tuỳ chọn: đơn tối thiểu, ngày bắt đầu, ngày kết thúc, tổng số lượt dùng, chỉ dành cho thành viên.
+- Mã mẫu:
+
+  | Mã | Ưu đãi |
+  |---|---|
+  | `LASTUDIO10` | Giảm 10%, tối đa 50.000đ, cho đơn từ 300.000đ |
+  | `GIAM50K` | Giảm 50.000đ cho đơn từ 500.000đ, tối đa 100 lượt |
+  | `FREESHIP` | Miễn phí giao hàng |
+  | `THANHVIEN15` | Mã ẩn, cần đăng nhập. Hiện luôn bị từ chối vì chưa có tài khoản. |
+
+- Mã có `public: true` được hiện thành gợi ý ở trang thanh toán.
+- Server tự tính lại giảm giá khi đặt đơn; số tiền client gửi lên bị bỏ qua. Lượt dùng được đếm từ `orders.jsonl`.
+- Mỗi đơn chỉ dùng một mã.
+- API xem trước mã (`/api/coupons/preview`) giới hạn 10 lần mỗi phút mỗi IP, để không đoán mã bằng cách thử liên tục.
+
 ## Lưu trữ đơn hàng
 
 Chưa có database. Đơn hàng được ghi thành tệp JSON Lines (mỗi dòng một bản ghi) trong thư mục `DATA_DIR` (mặc định `.data/`) thông qua interface repository trong `src/lib/orders`. Muốn dùng database thật, viết một repository mới theo cùng interface rồi thay vào chỗ đang dùng, phần còn lại của ứng dụng không phải đổi.

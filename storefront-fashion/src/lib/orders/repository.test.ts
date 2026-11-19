@@ -31,4 +31,13 @@ describe('createFileOrderRepository', () => {
     expect((await repo.findByCode('LS-261118-BBBBBBBB'))?.code).toBe('LS-261118-BBBBBBBB')
     expect(await repo.findByCode('LS-261118-CCCCCCCC')).toBeNull()
   })
+
+  it('counts orders placed with a coupon code', async () => {
+    const repo = createFileOrderRepository(join(dir, 'orders.jsonl'))
+    expect(await repo.countByCoupon('GIAM50K')).toBe(0)
+    await repo.create({ ...order('LS-261118-AAAAAAAA'), couponCode: 'GIAM50K', discount: 50000 })
+    await repo.create({ ...order('LS-261118-BBBBBBBB'), couponCode: 'FREESHIP' })
+    await repo.create(order('LS-261118-CCCCCCCC'))
+    expect(await repo.countByCoupon('GIAM50K')).toBe(1)
+  })
 })

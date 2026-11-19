@@ -40,6 +40,12 @@ function OrderLines({ order }: { readonly order: PublicOrder }) {
       </ul>
       <dl className="mt-3 space-y-2 border-t border-line pt-3 text-sm text-ink">
         <div className="flex justify-between"><dt>Tạm tính</dt><dd>{formatVnd(order.subtotal)}</dd></div>
+        {order.discount ? (
+          <div className="flex justify-between text-brand-strong">
+            <dt>Giảm giá{order.couponCode ? ` (${order.couponCode})` : ''}</dt>
+            <dd>−{formatVnd(order.discount)}</dd>
+          </div>
+        ) : null}
         <div className="flex justify-between"><dt>Phí giao hàng</dt><dd>{order.shipping === 0 ? 'Miễn phí' : formatVnd(order.shipping)}</dd></div>
         <div className="flex justify-between text-base font-black text-ink"><dt>Tổng cộng</dt><dd className="text-price">{formatVnd(order.total)}</dd></div>
       </dl>
