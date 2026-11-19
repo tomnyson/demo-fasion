@@ -255,3 +255,22 @@
 - **THẤP.** Rate limiter lưu trong bộ nhớ, nên reset khi restart server.
 
 **Độ phức tạp:** Trung bình–cao, 11 task. Ước tính 10–14 giờ làm việc agent.
+
+---
+
+## Addendum (2026-11-19, after the coupon slice merged as 220eb88)
+
+Already on `main`, do not redo:
+- Task 7 is done. Files: `src/config/coupons.ts`, `src/lib/coupons/{types,evaluate,preview}.ts`, `/api/coupons/preview`.
+- Order changes already made:
+  - `Order.couponCode?` and `Order.discount?` added;
+  - `OrderRepository.countByCoupon(code)` added;
+  - `placeOrder` deps include optional `userId`, which turns on `requiresAccount` coupons;
+  - `placeOrder` runs under `withLock('orders', …)` from `src/lib/storage/lock.ts`.
+- Checkout already has `CouponField` and hidden `couponCode`. `useCheckoutSubmit({ onCouponRejected })` exists.
+- `perUserLimit` was not built. Add it in Task 8: `THANHVIEN15` gets `perUserLimit: 1`, and `CouponContext` gets `usedByUser`.
+
+Changes to the remaining tasks:
+- **Task 1:** build `createCollection` on top of the existing `withLock` (key = file path). Do not write a second mutex.
+- **Task 6:** `countByCoupon` must ignore orders whose `status === 'cancelled'` (A4).
+- **Task 8:** keep the existing coupon flow. Add `userId` and `signedIn` from the session, the address picker and `saveAddress`.
