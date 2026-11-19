@@ -55,4 +55,12 @@ describe('jsonl-store', () => {
     delete process.env.DATA_DIR
     expect(dataPath('orders.jsonl')).toBe(join('.data', 'orders.jsonl'))
   })
+
+  it('uses the writable temp folder on Vercel unless DATA_DIR is set', () => {
+    vi.stubEnv('DATA_DIR', '')
+    vi.stubEnv('VERCEL', '1')
+    expect(dataPath('users.jsonl')).toBe(join(tmpdir(), 'storefront-data', 'users.jsonl'))
+    vi.stubEnv('DATA_DIR', dir)
+    expect(dataPath('users.jsonl')).toBe(join(dir, 'users.jsonl'))
+  })
 })

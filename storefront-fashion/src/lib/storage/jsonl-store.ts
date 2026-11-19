@@ -1,9 +1,19 @@
 import { appendFile, type FileHandle, mkdir, open, readFile } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
+
+/**
+ * Data folder: DATA_DIR, else the writable temp folder on Vercel (its code folder is read-only;
+ * demo only — data there is per instance and lost on restart), else `.data`.
+ */
+function dataDir(): string {
+  if (process.env.DATA_DIR) return process.env.DATA_DIR
+  return process.env.VERCEL ? join(tmpdir(), 'storefront-data') : '.data'
+}
 
 export function dataPath(fileName: string): string {
   // Runtime data directory, not a build asset: keep the bundler from tracing the whole project.
-  return join(/*turbopackIgnore: true*/ process.env.DATA_DIR ?? '.data', fileName)
+  return join(/*turbopackIgnore: true*/ dataDir(), fileName)
 }
 
 const NEWLINE = 0x0a
