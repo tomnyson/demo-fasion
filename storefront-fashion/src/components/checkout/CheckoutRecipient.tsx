@@ -39,8 +39,7 @@ export function CheckoutRecipient({ account, errors }: CheckoutRecipientProps) {
       {account.addresses.length === 0 ? null : (
         <AddressPicker addresses={account.addresses} selected={selected} onSelect={setSelected} error={errors.addressId} />
       )}
-      {typing ? <RecipientFields errors={errors} /> : <RecipientFields errors={errors} shipping={false} />}
-      {typing ? <SaveAddressCheckbox /> : null}
+      {typing ? <RecipientFields errors={errors} afterAddress={<SaveAddressCheckbox />} /> : <RecipientFields errors={errors} shipping={false} />}
     </>
   )
 }

@@ -1,4 +1,4 @@
-import type { ComponentProps } from 'react'
+import type { ComponentProps, ReactNode } from 'react'
 import { FormField } from '@/components/ui/FormField'
 import { PROVINCES } from '@/config/provinces'
 
@@ -29,6 +29,8 @@ interface RecipientFieldsProps {
   readonly errors: FieldErrors
   /** False when a saved address supplies name, phone, province and address; email, note and payment stay. */
   readonly shipping?: boolean
+  /** Rendered directly under the typed address fields, before note and payment. */
+  readonly afterAddress?: ReactNode
 }
 
 function ShippingFields({ errors }: { readonly errors: FieldErrors }) {
@@ -66,7 +68,7 @@ function PlaceFields({ errors }: { readonly errors: FieldErrors }) {
   )
 }
 
-export function RecipientFields({ errors, shipping = true }: RecipientFieldsProps) {
+export function RecipientFields({ errors, shipping = true, afterAddress }: RecipientFieldsProps) {
   return (
     <>
       {shipping ? <ShippingFields errors={errors} /> : null}
@@ -74,6 +76,7 @@ export function RecipientFields({ errors, shipping = true }: RecipientFieldsProp
         {(props) => <input type="email" autoComplete="email" {...props} />}
       </Field>
       {shipping ? <PlaceFields errors={errors} /> : null}
+      {shipping ? afterAddress : null}
       <Field name="note" label="Ghi chú" error={errors['customer.note']}>
         {(props) => <textarea rows={3} {...props} />}
       </Field>

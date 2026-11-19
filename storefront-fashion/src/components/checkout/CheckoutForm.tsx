@@ -19,7 +19,7 @@ function OrderSummary({ coupon, children }: OrderSummaryProps) {
   const shipping = coupon?.shipping ?? totals.shipping
   const total = coupon?.total ?? totals.total
   return (
-    <aside aria-label="Đơn hàng của bạn" className="flex flex-col gap-3 rounded-card border border-line bg-white p-5 shadow-card">
+    <aside aria-label="Đơn hàng của bạn" className="flex min-w-0 flex-col gap-3 rounded-card border border-line bg-white p-5 shadow-card">
       <ul className="space-y-2 text-sm text-ink">
         {totals.lines.map((item) => (
           <li key={item.key} className="flex justify-between gap-3">
@@ -95,7 +95,7 @@ export function CheckoutForm({ account }: CheckoutFormProps = {}) {
 
   return (
     <div className="grid items-start gap-6 min-[850px]:grid-cols-[1fr_380px]">
-      <form noValidate onSubmit={handleSubmit} className="flex flex-col gap-4 rounded-card border border-line bg-white p-5 shadow-card">
+      <form noValidate onSubmit={handleSubmit} className="flex min-w-0 flex-col gap-4 rounded-card border border-line bg-white p-5 shadow-card">
         <CheckoutRecipient account={account} errors={errors} />
         <input type="hidden" name="couponCode" value={coupon?.code ?? ''} />
         {formError === null ? null : (
