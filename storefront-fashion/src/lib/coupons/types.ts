@@ -16,6 +16,8 @@ export interface Coupon {
   readonly endsAt?: string
   /** Total uses across all orders. */
   readonly usageLimit?: number
+  /** Uses per signed-in customer; guests are only limited by `requiresAccount`. */
+  readonly perUserLimit?: number
   /** Only signed-in customers may use it. */
   readonly requiresAccount?: boolean
   /** Shown as a suggestion at checkout. */
@@ -27,8 +29,10 @@ export interface CouponContext {
   readonly shipping: number
   readonly now: Date
   readonly signedIn: boolean
-  /** Orders already placed with this code. */
+  /** Live (not cancelled) orders already placed with this code. */
   readonly usedCount: number
+  /** Live orders this signed-in customer already placed with this code; 0 for guests. */
+  readonly usedByUser: number
 }
 
 export type CouponResult =

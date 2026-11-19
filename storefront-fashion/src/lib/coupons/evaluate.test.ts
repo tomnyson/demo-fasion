@@ -10,6 +10,7 @@ const ctx = (patch: Partial<CouponContext> = {}): CouponContext => ({
   now: NOW,
   signedIn: false,
   usedCount: 0,
+  usedByUser: 0,
   ...patch,
 })
 
@@ -21,6 +22,7 @@ const list: readonly Coupon[] = [
   { code: 'SOON', label: 'n', kind: 'fixed', value: 1000, startsAt: '2026-12-01T00:00:00Z' },
   { code: 'LIMIT', label: 'l', kind: 'fixed', value: 1000, usageLimit: 2 },
   { code: 'MEMBER', label: 'm', kind: 'fixed', value: 1000, requiresAccount: true },
+  { code: 'ONCE', label: 'o', kind: 'fixed', value: 1000, perUserLimit: 1 },
 ]
 
 describe('normalizeCouponCode', () => {
@@ -57,6 +59,20 @@ describe('evaluateCoupon', () => {
     expect(fail('LIMIT', { usedCount: 1 })).toBeNull()
     expect(fail('MEMBER')).toBe(COUPON_MESSAGES.membersOnly)
     expect(fail('MEMBER', { signedIn: true })).toBeNull()
+  })
+
+  it('limits uses per signed-in customer', () => {
+    const message = (patch: Partial<CouponContext>) => {
+      const result = evaluateCoupon('ONCE', ctx(patch), list)
+      return result.ok ? null : result.message
+    }
+    expect(message({ signedIn: true, usedByUser: 1 })).toBe(COUPON_MESSAGES.usedByYou)
+    expect(message({ signedIn: true, usedByUser: 0, usedCount: 50 })).toBeNull()
+    expect(message({ signedIn: false, usedByUser: 0 })).toBeNull()
+  })
+
+  it('gives THANHVIEN15 one use per member', () => {
+    expect(findCoupon('THANHVIEN15')).toMatchObject({ requiresAccount: true, perUserLimit: 1 })
   })
 })
 

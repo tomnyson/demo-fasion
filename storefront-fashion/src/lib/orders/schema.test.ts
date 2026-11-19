@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { orderInputSchema } from './schema'
+import { orderInputSchema, parseOrderInput } from './schema'
 import { line, valid } from './fixtures'
 
 const withCustomer = (patch: Record<string, unknown>) => ({ ...valid, customer: { ...valid.customer, ...patch } })
@@ -54,5 +54,24 @@ describe('orderInputSchema', () => {
     const parsed = orderInputSchema.parse({ ...valid, total: 1, lines: [{ ...valid.lines[0], unitPrice: 1 }] })
     expect('total' in parsed).toBe(false)
     expect('unitPrice' in parsed.lines[0]).toBe(false)
+  })
+})
+
+describe('parseOrderInput', () => {
+  const { customer: _c, ...rest } = valid
+  void _c
+
+  it('uses the full recipient schema without an address id', () => {
+    expect(parseOrderInput({ ...valid, addressId: '', saveAddress: true })).toMatchObject({ success: true, data: { saveAddress: true } })
+    expect(parseOrderInput(rest).success).toBe(false)
+  })
+
+  it('needs only email and note with an address id', () => {
+    const r = parseOrderInput({ ...rest, addressId: ' a1 ', customer: { email: '', note: ' hi ', name: 'ignored' } })
+    expect(r.success && r.data).toMatchObject({ addressId: 'a1', customer: { note: 'hi' } })
+    expect(r.success && r.data.customer).not.toHaveProperty('name')
+    const bad = parseOrderInput({ ...rest, addressId: 7 })
+    expect(!bad.success && bad.error.issues[0]).toMatchObject({ path: ['addressId'], message: 'Địa chỉ giao hàng không hợp lệ.' })
+    expect(parseOrderInput({ ...rest, addressId: 'a1', saveAddress: 'yes' }).success).toBe(false)
   })
 })

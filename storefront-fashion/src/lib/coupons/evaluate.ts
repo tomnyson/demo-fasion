@@ -8,6 +8,7 @@ export const COUPON_MESSAGES = {
   notStarted: 'Mã giảm giá chưa đến thời gian sử dụng.',
   usedUp: 'Mã giảm giá đã hết lượt sử dụng.',
   membersOnly: 'Vui lòng đăng nhập để dùng mã này.',
+  usedByYou: 'Bạn đã dùng hết lượt cho mã giảm giá này.',
 } as const
 
 const minimumMessage = (amount: number): string => `Đơn hàng chưa đạt giá trị tối thiểu ${formatVnd(amount)}.`
@@ -32,6 +33,7 @@ function rejection(coupon: Coupon, ctx: CouponContext): string | null {
   if (coupon.endsAt !== undefined && now > Date.parse(coupon.endsAt)) return COUPON_MESSAGES.expired
   if (coupon.requiresAccount === true && !ctx.signedIn) return COUPON_MESSAGES.membersOnly
   if (coupon.usageLimit !== undefined && ctx.usedCount >= coupon.usageLimit) return COUPON_MESSAGES.usedUp
+  if (coupon.perUserLimit !== undefined && ctx.signedIn && ctx.usedByUser >= coupon.perUserLimit) return COUPON_MESSAGES.usedByYou
   if (coupon.minSubtotal !== undefined && ctx.subtotal < coupon.minSubtotal) return minimumMessage(coupon.minSubtotal)
   return null
 }

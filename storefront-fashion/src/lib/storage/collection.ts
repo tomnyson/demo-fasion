@@ -36,6 +36,15 @@ const hasStringId = (value: unknown): value is { readonly id: string } =>
 
 const isTombstone = (value: { readonly id: string }): value is Tombstone => (value as { deleted?: unknown }).deleted === true
 
+const isTombstoneLine = (value: unknown): boolean => hasStringId(value) && isTombstone(value)
+
+export interface CollectionOptions {
+  /** Upgrades each stored line before merging (e.g. legacy lines without `id`); `null` drops the line. */
+  readonly normalize?: (raw: unknown) => unknown
+}
+
+const keep = (raw: unknown): unknown => raw
+
 function merge<T extends { readonly id: string }>(records: readonly unknown[]): readonly T[] {
   // Local accumulator only; copying the map per line would make reads quadratic.
   const latest = new Map<string, { readonly id: string }>()
@@ -51,8 +60,8 @@ async function appendLines(filePath: string, records: readonly unknown[]): Promi
 }
 
 /** Append-only JSONL collection keyed by `id`, with in-process locking per file. */
-export function createCollection<T extends { readonly id: string }>(filePath: string): Collection<T> {
-  const all = async (): Promise<readonly T[]> => merge<T>(await readRecords<unknown>(filePath))
+export function createCollection<T extends { readonly id: string }>(filePath: string, { normalize = keep }: CollectionOptions = {}): Collection<T> {
+  const all = async (): Promise<readonly T[]> => merge<T>((await readRecords<unknown>(filePath)).map((raw) => (isTombstoneLine(raw) ? raw : normalize(raw))))
   const write = (records: readonly CollectionWrite<T>[]) => withFileLock(filePath, () => appendLines(filePath, records))
   return {
     all,

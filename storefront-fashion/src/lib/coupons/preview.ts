@@ -2,6 +2,7 @@ import { z } from 'zod'
 import { sanitizeLines } from '@/lib/cart/storage'
 import { computeTotals } from '@/lib/cart/totals'
 import { couponCodeSchema, linesSchema, MESSAGES } from '@/lib/orders/schema'
+import type { CouponUsage } from '@/lib/orders/repository'
 import { evaluateCoupon } from './evaluate'
 
 export interface CouponPreview {
@@ -15,7 +16,7 @@ export interface CouponPreview {
 export type CouponPreviewResult = { ok: true; preview: CouponPreview } | { ok: false; message: string }
 
 export interface CouponPreviewDeps {
-  readonly countByCoupon: (code: string) => Promise<number>
+  readonly couponUsage: (code: string, userId?: string) => Promise<CouponUsage>
   readonly now: () => Date
   readonly userId?: string
 }
@@ -34,12 +35,14 @@ export async function previewCoupon(input: unknown, deps: CouponPreviewDeps): Pr
   const totals = computeTotals(sanitizeLines(lines))
   if (totals.lines.length === 0) return { ok: false, message: MESSAGES.lines }
 
+  const usage = await deps.couponUsage(code, deps.userId)
   const result = evaluateCoupon(code, {
     subtotal: totals.subtotal,
     shipping: totals.shipping,
     now: deps.now(),
     signedIn: deps.userId !== undefined,
-    usedCount: await deps.countByCoupon(code),
+    usedCount: usage.total,
+    usedByUser: usage.byUser,
   })
   if (!result.ok) return result
   return {

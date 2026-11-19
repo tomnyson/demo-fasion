@@ -2,7 +2,10 @@ import { mkdtemp, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
+import { signedInUser } from '@/app/api/account/test-helpers'
+import { createAddressRepository } from '@/lib/addresses/repository'
 import { valid } from '@/lib/orders/fixtures'
+import { createFileOrderRepository } from '@/lib/orders/repository'
 import { ORDER_CODE_PATTERN } from '@/lib/orders/code'
 
 let dir: string
@@ -30,7 +33,46 @@ const send = (text: string, headers: Record<string, string> = {}) => {
 const post = (body: unknown, headers?: Record<string, string>) => send(JSON.stringify(body), headers)
 const rawPost = (text: string) => send(text)
 
+const HOME = { recipient: 'Trần Thị B', phone: '0912345678', province: 'Đà Nẵng', address: '45 Bạch Đằng' } as const
+
 describe('POST /api/orders', () => {
+  it('stores the signed-in user on the order and resolves their saved address', async () => {
+    const { userId, cookie } = await signedInUser()
+    const added = await createAddressRepository().add(userId, HOME)
+    if (!added.ok) throw new Error('setup')
+    const { customer: _c, ...rest } = valid
+    void _c
+    const res = await POST(post({ ...rest, addressId: added.address.id, customer: { email: '', note: '' } }, { cookie }))
+    expect(res.status).toBe(201)
+    const order = await createFileOrderRepository().findByCode((await res.json()).data.code)
+    expect(order).toMatchObject({ userId, status: 'pending', customer: { name: HOME.recipient, province: HOME.province } })
+  })
+
+  it('refuses a foreign or unknown address id, and guests sending one, without storing', async () => {
+    const owner = await signedInUser()
+    const other = await signedInUser()
+    const added = await createAddressRepository().add(owner.userId, HOME)
+    if (!added.ok) throw new Error('setup')
+    const before = (await createFileOrderRepository().mutate((all) => ({ writes: [], result: all }))).length
+    for (const [addressId, headers] of [
+      [added.address.id, { cookie: other.cookie }],
+      ['missing', { cookie: owner.cookie }],
+      [added.address.id, {}],
+    ] as const) {
+      const res = await POST(post({ ...valid, addressId }, headers))
+      expect(res.status).toBe(400)
+      expect((await res.json()).error.fields).toEqual({ addressId: 'Địa chỉ giao hàng không hợp lệ.' })
+    }
+    const after = (await createFileOrderRepository().mutate((all) => ({ writes: [], result: all }))).length
+    expect(after).toBe(before)
+  })
+
+  it('keeps guest orders unowned', async () => {
+    const res = await POST(post(valid))
+    const order = await createFileOrderRepository().findByCode((await res.json()).data.code)
+    expect(order).not.toHaveProperty('userId')
+  })
+
   it('applies a coupon on the server and reports an unusable one under couponCode', async () => {
     const res = await POST(post({ ...valid, couponCode: 'FREESHIP' }))
     expect(res.status).toBe(201)

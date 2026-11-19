@@ -37,6 +37,7 @@ export const COUPONS: readonly Coupon[] = Object.freeze([
     value: 15,
     maxDiscount: 100000,
     requiresAccount: true,
+    perUserLimit: 1,
     public: false,
   },
 ] satisfies Coupon[])

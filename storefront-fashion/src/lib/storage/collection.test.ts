@@ -27,6 +27,20 @@ describe('createCollection', () => {
     expect(await items.get('a')).toBeNull()
   })
 
+  it('upgrades lines with `normalize` before merging and never passes it tombstones', async () => {
+    await writeFile(file.replace('nested/', ''), '{"key":"a","n":1}\n{"key":"b","n":1}\nnot json\n{"id":"b","deleted":true}\n')
+    const seen: unknown[] = []
+    const items = createCollection<Item>(file.replace('nested/', ''), {
+      normalize: (raw) => {
+        seen.push(raw)
+        const r = raw as { key?: string; n: number }
+        return r.key === undefined ? null : { id: r.key, n: r.n }
+      },
+    })
+    expect(await items.all()).toEqual([{ id: 'a', n: 1 }])
+    expect(seen).toHaveLength(2)
+  })
+
   it('lets the newest record with an id win', async () => {
     const items = createCollection<Item>(file)
     await items.put({ id: 'a', n: 1 })

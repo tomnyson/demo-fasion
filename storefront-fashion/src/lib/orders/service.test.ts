@@ -1,21 +1,29 @@
-import { beforeEach, describe, expect, it } from 'vitest'
-import { A, line, valid } from './fixtures'
-import type { OrderRepository } from './repository'
+import { mkdtemp, rm } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { A, line, storedOrder, valid } from './fixtures'
+import { createFileOrderRepository, type OrderRepository } from './repository'
 import type { Order } from './schema'
 import { placeOrder, toPublicOrder } from './service'
 
-let saved: Order[]
-let used: number
+let dir: string
+let repo: OrderRepository
 let deps: { repo: OrderRepository; now: () => Date }
+const savedOrders = (): Promise<readonly Order[]> => repo.mutate((all) => ({ writes: [], result: all }))
+let saved: readonly Order[] = []
 
-beforeEach(() => {
-  saved = []
-  used = 0
-  deps = {
-    repo: { create: async (order) => void saved.push(order), findByCode: async () => null, countByCoupon: async () => used },
-    now: () => new Date('2026-11-18T03:00:00Z'),
-  }
+beforeEach(async () => {
+  dir = await mkdtemp(join(tmpdir(), 'place-order-'))
+  repo = createFileOrderRepository(join(dir, 'orders.jsonl'))
+  deps = { repo, now: () => new Date('2026-11-18T03:00:00Z') }
 })
+afterEach(() => rm(dir, { recursive: true, force: true }))
+
+/** Stores `n` live orders that used `code`. */
+async function useCoupon(code: string, n: number, patch: Partial<Order> = {}): Promise<void> {
+  for (let i = 0; i < n; i += 1) await repo.create(storedOrder(`LS-261118-USED${String(i).padStart(4, '0')}`, { couponCode: code, ...patch }))
+}
 
 describe('placeOrder', () => {
   it('recomputes prices on the server and ignores client amounts', async () => {
@@ -25,6 +33,14 @@ describe('placeOrder', () => {
     expect(r.ok && r.order.code).toMatch(/^LS-261118-/)
     expect(r.ok && r.order.createdAt).toBe('2026-11-18T03:00:00.000Z')
     expect(r.ok && r.order.customer.phone).toBe('0901234567')
+    if (!r.ok) throw new Error('expected an order')
+    expect([r.order.id, r.order.status, r.order.statusHistory, 'userId' in r.order]).toEqual([
+      r.order.code,
+      'pending',
+      [{ status: 'pending', at: '2026-11-18T03:00:00.000Z' }],
+      false,
+    ])
+    saved = await savedOrders()
     expect(saved).toHaveLength(1)
   })
 
@@ -55,10 +71,13 @@ describe('placeOrder', () => {
 
   it('stores only valid orders and hides customer data in the public view', async () => {
     await placeOrder({ ...valid, customer: { ...valid.customer, phone: '1' } }, deps)
-    expect(saved).toHaveLength(0)
-    await placeOrder(valid, deps)
+    expect(await savedOrders()).toHaveLength(0)
+    await placeOrder(valid, { ...deps, userId: 'u1' })
+    saved = await savedOrders()
     expect(saved).toHaveLength(1)
+    expect(saved[0].userId).toBe('u1')
     expect('customer' in toPublicOrder(saved[0])).toBe(false)
+    expect('userId' in toPublicOrder(saved[0])).toBe(false)
   })
 })
 
@@ -91,9 +110,30 @@ describe('placeOrder with a coupon', () => {
       const r = await placeOrder(input, deps)
       expect(!r.ok && r.fields.couponCode).toBe(message)
     }
-    used = 100
+    await useCoupon('GIAM50K', 100)
     const usedUp = await placeOrder({ ...valid, lines: [line(3)], couponCode: 'GIAM50K' }, deps)
     expect(!usedUp.ok && usedUp.fields.couponCode).toBe('Mã giảm giá đã hết lượt sử dụng.')
-    expect(saved).toHaveLength(0)
+    expect(await savedOrders()).toHaveLength(100)
+  })
+
+  it('gives a use back when an order with the code is cancelled (A4)', async () => {
+    await useCoupon('GIAM50K', 100)
+    await repo.updateStatus('LS-261118-USED0000', 'cancelled', new Date())
+    expect((await placeOrder({ ...valid, lines: [line(3)], couponCode: 'GIAM50K' }, deps)).ok).toBe(true)
+  })
+
+  it('never overruns a usage limit with parallel orders', async () => {
+    await useCoupon('GIAM50K', 97)
+    const results = await Promise.all(Array.from({ length: 6 }, () => placeOrder({ ...valid, lines: [line(3)], couponCode: 'GIAM50K' }, deps)))
+    expect(results.filter((r) => r.ok)).toHaveLength(3)
+  })
+
+  it('lets a member use THANHVIEN15 once', async () => {
+    const member = { ...deps, userId: 'u1' }
+    const first = await placeOrder({ ...valid, couponCode: 'THANHVIEN15' }, member)
+    expect(first.ok && [first.order.discount, first.order.couponCode]).toEqual([68700, 'THANHVIEN15'])
+    const again = await placeOrder({ ...valid, couponCode: 'THANHVIEN15' }, member)
+    expect(!again.ok && again.fields.couponCode).toBe('Bạn đã dùng hết lượt cho mã giảm giá này.')
+    expect((await placeOrder({ ...valid, couponCode: 'THANHVIEN15' }, { ...deps, userId: 'u2' })).ok).toBe(true)
   })
 })
