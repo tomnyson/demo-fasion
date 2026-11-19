@@ -11,6 +11,7 @@ const MAX_COST = 65_536
 const MAX_BLOCK_SIZE = 16
 const MAX_PARALLELISM = 4
 const MAX_KEY_BYTES = 128
+const MAX_MEMORY_BYTES = 64 * 1024 * 1024
 
 interface ScryptParams {
   readonly cost: number
@@ -25,8 +26,8 @@ function derive(password: string, salt: Buffer, keyBytes: number, params: Omit<S
     N: params.cost,
     r: params.blockSize,
     p: params.parallelism,
-    // scrypt needs about 128·N·r bytes per lane; leave headroom so valid parameters never hit the limit.
-    maxmem: 128 * params.cost * params.blockSize * (params.parallelism + 2),
+    // Our parameters need ~16 MiB; a hard cap makes oversized stored parameters fail fast instead of eating memory.
+    maxmem: MAX_MEMORY_BYTES,
   }
   return new Promise((resolve, reject) => {
     scrypt(password.normalize('NFKC'), salt, keyBytes, options, (error, key) => (error ? reject(error) : resolve(key)))
@@ -65,6 +66,11 @@ function parseStored(stored: string): ScryptParams | null {
 export async function verifyPassword(password: string, stored: string): Promise<boolean> {
   const params = parseStored(stored)
   if (params === null) return false
-  const candidate = await derive(password, params.salt, params.hash.length, params)
-  return candidate.length === params.hash.length && timingSafeEqual(candidate, params.hash)
+  try {
+    const candidate = await derive(password, params.salt, params.hash.length, params)
+    return candidate.length === params.hash.length && timingSafeEqual(candidate, params.hash)
+  } catch {
+    // Parameters that parse but scrypt refuses (e.g. memory limit) count as a mismatch.
+    return false
+  }
 }

@@ -24,6 +24,7 @@ describe('password hashing', () => {
     ['cost not a power of two', 'scrypt$1000$8$1$c2FsdA$aGFzaA'],
     ['oversized cost', 'scrypt$1048576$8$1$c2FsdA$aGFzaA'],
     ['empty hash', 'scrypt$16384$8$1$c2FsdA$'],
+    ['parameters scrypt refuses', 'scrypt$65536$16$4$c2FsdA$aGFzaA'],
   ])('returns false for a malformed stored value (%s)', async (_name, stored) => {
     expect(await verifyPassword('anything', stored)).toBe(false)
   })
